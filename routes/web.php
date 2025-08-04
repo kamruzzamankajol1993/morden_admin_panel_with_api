@@ -61,7 +61,7 @@ Route::get('/customerPersonalTicketPdf/{id}', 'customerPersonalTicketPdf')->name
 });
 Route::controller(LoginController::class)->group(function () {
 
-    Route::get('/0wner', 'viewLoginPage')->name('viewLoginPage');
+    Route::get('/', 'viewLoginPage')->name('viewLoginPage');
     Route::get('/password/reset', 'showLinkRequestForm')->name('showLinkRequestForm');
     Route::post('/password/reset/submit', 'reset')->name('reset');
 

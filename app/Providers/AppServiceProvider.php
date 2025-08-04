@@ -40,10 +40,7 @@ class AppServiceProvider extends ServiceProvider
 
             //global social link code start
 
-            // Fetch social links from the database
-            $socialLinks = DB::table('social_links')->get();
-            view()->share('socialLinks', $socialLinks);
-            //global social link code end
+           
             
 
             //provider code for frontend

@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-
-
 <head>
-    <meta charset="UTF-8">
+   <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -18,43 +16,26 @@
     <title>@yield('title')</title>
     <!-- Favicon -->
     <link rel="shortcut icon" href="{{ asset('/') }}{{ $icon }}">
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="{{asset('/')}}public/admin/assets/css/bootstrap.min.css">
-    <!-- file upload -->
-    <link rel="stylesheet" href="{{asset('/')}}public/admin/assets/css/file-upload.css">
-    <!-- file upload -->
-    <link rel="stylesheet" href="{{asset('/')}}public/admin/assets/css/plyr.css">
-  
-    <!-- full calendar -->
-    <link rel="stylesheet" href="{{asset('/')}}public/admin/assets/css/full-calendar.css">
-    <!-- jquery Ui -->
-    <link rel="stylesheet" href="{{asset('/')}}public/admin/assets/css/jquery-ui.css">
-    <!-- editor quill Ui -->
-    <link rel="stylesheet" href="{{asset('/')}}public/admin/assets/css/editor-quill.css">
-    <!-- apex charts Css -->
-    <link rel="stylesheet" href="{{asset('/')}}public/admin/assets/css/apexcharts.css">
-    <!-- calendar Css -->
-    <link rel="stylesheet" href="{{asset('/')}}public/admin/assets/css/calendar.css">
-    <!-- jvector map Css -->
-    <link rel="stylesheet" href="{{asset('/')}}public/admin/assets/css/jquery-jvectormap-2.0.5.css">
-    <!-- Main css -->
-    <link rel="stylesheet" href="{{asset('/')}}public/admin/assets/css/main.css">
-    <link rel="stylesheet" href="{{asset('/')}}public/online/toastr.min.css">
- 
-    <link rel="stylesheet" href="{{asset('/')}}public/online/all.min.css"/>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{{ asset('/') }}public/admin/assets/css/style.css">
+     <link rel="stylesheet" href="{{asset('/')}}public/online/toastr.min.css">
     <link rel="stylesheet" href="{{ asset('/') }}public/parsely.css"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    
     <!-- CSS -->
     <link rel="stylesheet" href="{{asset('/')}}public/online/alertify.min.css"/>
     {{-- jQuery UI CSS for Datepicker --}}
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 {{-- Summernote CSS --}}
 <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
-{{-- Optional: Custom CSS for finer control or unique styles --}}
-    <!-- Default theme -->
-    <link rel="stylesheet" href="{{asset('/')}}public/online/default.min.css"/>
-    <link rel="stylesheet" href="{{asset('/')}}public/online/select2.min.css" />
-   
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha512-q3eWabyZPc1XTCmF+8/LuE1ozpg5xxn7iO89yfSOd5/oKvyqLngoNGsx8jq92Y8eXJ/IRxQbEC+FGSYxtk2oiw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
 
@@ -200,77 +181,40 @@
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha512-f8gN/IhfI+0E9Fc/LKtjVq4ywfhYAVeMGKsECzDUHcFJ5teVwvKTqizm+5a84FINhfrgdvjX8hEJbem2io1iTA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     @yield('css')
-</head> 
+</head>
 <body>
-    
-<!--==================== Preloader Start ====================-->
-  @include('admin.include.loader')
-<!--==================== Preloader End ====================-->
 
-<!--==================== Sidebar Overlay End ====================-->
-<div class="side-overlay"></div>
-<!--==================== Sidebar Overlay End ====================-->
+    <div class="d-flex" id="wrapper">
+        @include('admin.include.sidebar')
+        <div id="page-content-wrapper">
+            @include('admin.include.header')
+           @yield('body')
+            </div>
+        </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        // Sidebar Toggle Functionality
+        var el = document.getElementById("wrapper");
+        var toggleButton = document.getElementById("menu-toggle");
+        toggleButton.onclick = function () { el.classList.toggle("toggled"); };
 
-    <!-- ============================ Sidebar Start ============================ -->
-    @include('admin.include.sidebar')
- 
-<!-- ============================ Sidebar End  ============================ -->
-
-    <div class="dashboard-main-wrapper">
-
- <!-- ============================ header Start ============================ -->
- @include('admin.include.header')
- 
- <!-- ============================ header End  ============================ -->
-        <!-- ============================ body Start ============================ -->
-        @yield('body')
-         <!-- ============================ body End  ============================ -->
-        <!-- ============================ footer Start ============================ -->
- @include('admin.include.footer')
- 
- <!-- ============================ footer End  ============================ -->
-    </div>
-    
-        <!-- Jquery js -->
-    <script src="{{asset('/')}}public/admin/assets/js/jquery-3.7.1.min.js"></script>
-    <!-- Bootstrap Bundle Js -->
-    <script src="{{asset('/')}}public/admin/assets/js/boostrap.bundle.min.js"></script>
-    <!-- Phosphor Js -->
-    <script src="{{asset('/')}}public/admin/assets/js/phosphor-icon.js"></script>
-    <!-- file upload -->
-    <script src="{{asset('/')}}public/admin/assets/js/file-upload.js"></script>
-    <!-- file upload -->
-    <script src="{{asset('/')}}public/admin/assets/js/plyr.js"></script>
-   
-  
-    <!-- full calendar -->
-    <script src="{{asset('/')}}public/admin/assets/js/full-calendar.js"></script>
-    <!-- jQuery UI -->
-    <script src="{{asset('/')}}public/admin/assets/js/jquery-ui.js"></script>
-    <!-- jQuery UI -->
-    <script src="{{asset('/')}}public/admin/assets/js/editor-quill.js"></script>
-    @if(Route::is('home'))
-    <!-- apex charts -->
-    <script src="{{asset('/')}}public/admin/assets/js/apexcharts.min.js"></script>
-    @endif
-    <!-- jvectormap Js -->
-    <script src="{{asset('/')}}public/admin/assets/js/jquery-jvectormap-2.0.5.min.js"></script>
-    <!-- jvectormap world Js -->
-    <script src="{{asset('/')}}public/admin/assets/js/jquery-jvectormap-world-mill-en.js"></script>
-    
-    <!-- main js -->
-    <script src="{{asset('/')}}public/admin/assets/js/main.js"></script>
-
-    
-    @if(Route::is('home'))
-    @include('admin.include.cartjs')
-    @endif
-
-    @if(!Route::is('home'))
-  
-    @endif
-    
-
+        // Live Date and Time for Bangladesh
+        function updateTime() {
+            const timeDisplay = document.getElementById('datetime-display');
+            if(timeDisplay) {
+                const now = new Date();
+                const options = {
+                    timeZone: 'Asia/Dhaka', // Bangladesh Standard Time
+                    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+                    hour: '2-digit', minute: '2-digit', hour12: true,
+                };
+                timeDisplay.textContent = now.toLocaleString('en-US', options).replace(/,/g, ' |');
+            }
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
     <script src="{{ asset('/')}}public/parsely1.js"></script>
     <script>
@@ -283,7 +227,6 @@
 
 <script src="{{asset('/')}}public/online/toastr.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="{{asset('/')}}public/online/select2.min.js"></script>
 <script type="text/javascript">
     function activeTag(id) {
         swal({
@@ -423,14 +366,6 @@
    });
      </script>
 
-    <script>
-
-        $(document).ready(function() {
-            $('.js-example-basic-single').select2();
-        });
-    </script>
     @yield('script')
-    </body>
-
-
+</body>
 </html>

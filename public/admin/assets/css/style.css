@@ -1,0 +1,206 @@
+/* ==================================================
+   General & Root Styles
+================================================== */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--light-bg);
+}
+
+:root {
+    --primary-color: #2b7f75;
+    --secondary-color: #ffd66b;
+    --light-bg: #f5f5f5;
+    --primary-text-color: #ffffff;
+    --secondary-text-color: #333;
+}
+
+/* ==================================================
+   Core Layout Styles
+================================================== */
+#wrapper {
+    overflow-x: hidden;
+}
+
+#page-content-wrapper {
+    min-width: 100vw;
+    position: relative;
+    padding-left: 250px;
+    transition: padding-left 0.25s ease-out;
+}
+
+#wrapper.toggled #page-content-wrapper {
+    min-width: 100vw;
+    padding-left: 0;
+}
+
+/* ==================================================
+   Redesigned & Fixed Sidebar Styles
+================================================== */
+#sidebar-wrapper {
+    background: var(--primary-color);
+    color: var(--primary-text-color);
+    min-height: 100vh;
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1030;
+    transition: margin 0.25s ease-out;
+}
+
+#wrapper.toggled #sidebar-wrapper {
+    margin-left: -250px;
+}
+
+.sidebar-container {
+    height: 100vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--secondary-color) var(--primary-color);
+}
+.sidebar-container::-webkit-scrollbar { width: 8px; }
+.sidebar-container::-webkit-scrollbar-track { background: var(--primary-color); }
+.sidebar-container::-webkit-scrollbar-thumb {
+    background-color: var(--secondary-color);
+    border-radius: 10px;
+    border: 2px solid var(--primary-color);
+}
+
+#sidebar-wrapper .sidebar-heading {
+    padding-bottom: 1rem !important;
+    color: var(--primary-text-color);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+#sidebar-wrapper .sidebar-heading span {
+    color: var(--primary-text-color);
+}
+
+.sidebar-logo {
+    width: 35px;
+    height: 35px;
+    object-fit: contain;
+}
+
+#sidebar-wrapper .list-group {
+    width: 100%;
+    padding: 0 1rem;
+}
+
+/* --- Base Nav Item Style --- */
+#sidebar-wrapper .list-group-item {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    padding: 0.8rem 1rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* --- General Hover State (for any item) --- */
+#sidebar-wrapper .list-group-item:hover {
+    background: var(--secondary-color);
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* --- Active State for Single Links (e.g., Dashboard) --- */
+#sidebar-wrapper .list-group-item.active:not([data-bs-toggle="collapse"]) {
+    background: var(--secondary-color);
+    color: var(--primary-color);
+    font-weight: 600;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* --- Active State for PARENT Dropdown Trigger (e.g., Catalog) --- */
+/* This is the main fix: only text turns yellow, background stays transparent */
+#sidebar-wrapper a.list-group-item.active[data-bs-toggle="collapse"] {
+    background: transparent;
+    color: var(--secondary-color);
+    font-weight: 600;
+}
+/* On hover, the parent dropdown should still get the yellow background */
+#sidebar-wrapper a.list-group-item.active[data-bs-toggle="collapse"]:hover {
+    background: var(--secondary-color);
+    color: var(--primary-color);
+}
+
+
+/* --- Submenu Container --- */
+.list-group-submenu {
+    padding-left: 1rem;
+    background-color: transparent;
+    margin-top: -8px; 
+    margin-bottom: 8px;
+    border-left: 2px solid rgba(255, 255, 255, 0.2);
+    margin-left: 0.75rem;
+}
+
+/* --- Submenu Item Base Style --- */
+.list-group-submenu .list-group-item {
+    margin-bottom: 2px;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    border-radius: 8px;
+}
+
+/* --- Active State for SUBMENU Item (e.g., Products) --- */
+/* This item gets the full yellow background to show it's the current page */
+.list-group-submenu .list-group-item.active {
+    background: var(--secondary-color);
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+
+/* --- Chevron Icon Rotation --- */
+.dropdown-indicator {
+    transition: transform 0.2s ease-in-out;
+}
+a[data-bs-toggle="collapse"][aria-expanded="true"] .dropdown-indicator {
+    transform: rotate(180deg);
+}
+
+/* ==================================================
+   Header & Main Content (Unchanged)
+================================================== */
+#page-content-wrapper header {
+    position: fixed; top: 0; right: 0; left: 250px; z-index: 1000;
+    background-color: #ffffff; border-bottom: 1px solid #e0e0e0;
+    transition: left 0.25s ease-out;
+}
+#wrapper.toggled #page-content-wrapper header { left: 0; }
+#menu-toggle { cursor: pointer; }
+.user-avatar { width: 30px; height: 30px; object-fit: cover; }
+#datetime-display { color: var(--secondary-text-color); font-size: 0.9rem; }
+.navbar-collapse .btn-danger { padding: 0.25rem 0.75rem; font-size: 0.85rem; }
+#page-content-wrapper main {
+    margin-top: 90px; 
+}
+.primary-text { color: var(--primary-color); }
+.second-text { color: var(--primary-color); }
+.rounded-full { border-radius: 100%; }
+.table-custom-header { background-color: var(--primary-color); color: var(--primary-text-color); }
+
+/* ==================================================
+   Responsive Design (Unchanged)
+================================================== */
+@media (min-width: 992px) {
+    #sidebar-wrapper { margin-left: 0; }
+    #page-content-wrapper { min-width: 0; width: 100%; }
+    #wrapper.toggled #sidebar-wrapper { margin-left: -250px; }
+}
+@media (max-width: 991.98px) {
+    #sidebar-wrapper { margin-left: -250px; }
+    #page-content-wrapper { padding-left: 0; }
+    #wrapper.toggled #sidebar-wrapper { margin-left: 0; }
+    #page-content-wrapper header { left: 0; }
+    .header-right-items {
+        width: 100%; padding-top: 1rem; align-items: flex-start !important;
+        flex-direction: column; gap: 0.75rem;
+    }
+}
+
