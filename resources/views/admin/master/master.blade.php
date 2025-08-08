@@ -17,13 +17,16 @@
     <!-- Favicon -->
     <link rel="shortcut icon" href="{{ asset('/') }}{{ $icon }}">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+    <!-- Google Fonts - Poppins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Feather Icons -->
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     
     <link rel="stylesheet" href="{{ asset('/') }}public/admin/assets/css/style.css">
      <link rel="stylesheet" href="{{asset('/')}}public/online/toastr.min.css">
@@ -184,36 +187,41 @@
 </head>
 <body>
 
-    <div class="d-flex" id="wrapper">
+  <div class="wrapper">
+        <!-- Sidebar -->
         @include('admin.include.sidebar')
-        <div id="page-content-wrapper">
-            @include('admin.include.header')
-           @yield('body')
-            </div>
-        </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script>
-        // Sidebar Toggle Functionality
-        var el = document.getElementById("wrapper");
-        var toggleButton = document.getElementById("menu-toggle");
-        toggleButton.onclick = function () { el.classList.toggle("toggled"); };
 
-        // Live Date and Time for Bangladesh
-        function updateTime() {
-            const timeDisplay = document.getElementById('datetime-display');
-            if(timeDisplay) {
-                const now = new Date();
-                const options = {
-                    timeZone: 'Asia/Dhaka', // Bangladesh Standard Time
-                    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-                    hour: '2-digit', minute: '2-digit', hour12: true,
-                };
-                timeDisplay.textContent = now.toLocaleString('en-US', options).replace(/,/g, ' |');
-            }
+        <!-- Page Content -->
+        <div id="content">
+            <!-- Header Navbar -->
+            @include('admin.include.header')
+
+            <!-- Main Content Area -->
+           @yield('body')
+
+           
+        </div>
+    </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Set current date in header
+        const dateElement = document.getElementById('currentDate');
+        if (dateElement) {
+            const today = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            dateElement.textContent = today.toLocaleDateString('en-US', options);
         }
-        setInterval(updateTime, 1000);
-        updateTime();
+
+        // Initialize Feather Icons
+        feather.replace();
+
+        // Sidebar Toggle Functionality
+        document.getElementById('sidebarToggleBtn').addEventListener('click', function () {
+            document.querySelector('.wrapper').classList.toggle('sidebar-collapsed');
+        });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
     <script src="{{ asset('/')}}public/parsely1.js"></script>
@@ -365,7 +373,25 @@
        });
    });
      </script>
+<script>
+    $(document).ready(function() {
+        // Find the sidebar container
+        var sidebar = $('#sidebar');
+        
+        // Find the currently active nav-link within the sidebar
+        var activeLink = sidebar.find('.nav-link.active');
 
+        // Check if an active link exists
+        if (activeLink.length > 0) {
+            // Use the scrollIntoView() method to scroll the sidebar
+            // 'block: "center"' attempts to place the element in the middle of the scrollable area
+            activeLink[0].scrollIntoView({
+                behavior: 'smooth', // Optional: for a smooth scrolling effect
+                block: 'center'
+            });
+        }
+    });
+</script>
     @yield('script')
 </body>
 </html>

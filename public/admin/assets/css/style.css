@@ -1,206 +1,251 @@
-/* ==================================================
-   General & Root Styles
-================================================== */
-body {
-    font-family: 'Poppins', sans-serif;
-    background-color: var(--light-bg);
-}
 
-:root {
-    --primary-color: #2b7f75;
-    --secondary-color: #ffd66b;
-    --light-bg: #f5f5f5;
-    --primary-text-color: #ffffff;
-    --secondary-text-color: #333;
-}
+        :root {
+            --primary-color: #1d1c1c;
+            --accent-color: #ffd66b;
+            --light-gray: #f8f9fa;
+            --dark-gray: #6c757d;
+            --text-color: #343a40;
+            --sidebar-width: 260px;
+        }
 
-/* ==================================================
-   Core Layout Styles
-================================================== */
-#wrapper {
-    overflow-x: hidden;
-}
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            transition: background-color 0.3s;
+        }
 
-#page-content-wrapper {
-    min-width: 100vw;
-    position: relative;
-    padding-left: 250px;
-    transition: padding-left 0.25s ease-out;
-}
+        /* Main wrapper */
+        .wrapper {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
 
-#wrapper.toggled #page-content-wrapper {
-    min-width: 100vw;
-    padding-left: 0;
-}
+        /* --- Sidebar Styles --- */
+        #sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: var(--primary-color);
+            color: #fff;
+            transition: all 0.3s;
+            z-index: 1030; /* Higher than navbar */
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-color) var(--primary-color);
+        }
 
-/* ==================================================
-   Redesigned & Fixed Sidebar Styles
-================================================== */
-#sidebar-wrapper {
-    background: var(--primary-color);
-    color: var(--primary-text-color);
-    min-height: 100vh;
-    width: 250px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1030;
-    transition: margin 0.25s ease-out;
-}
+        #sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
 
-#wrapper.toggled #sidebar-wrapper {
-    margin-left: -250px;
-}
+        #sidebar::-webkit-scrollbar-track {
+            background: var(--primary-color);
+        }
 
-.sidebar-container {
-    height: 100vh;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--secondary-color) var(--primary-color);
-}
-.sidebar-container::-webkit-scrollbar { width: 8px; }
-.sidebar-container::-webkit-scrollbar-track { background: var(--primary-color); }
-.sidebar-container::-webkit-scrollbar-thumb {
-    background-color: var(--secondary-color);
-    border-radius: 10px;
-    border: 2px solid var(--primary-color);
-}
+        #sidebar::-webkit-scrollbar-thumb {
+            background-color: var(--accent-color);
+            border-radius: 10px;
+            border: 2px solid var(--primary-color);
+        }
 
-#sidebar-wrapper .sidebar-heading {
-    padding-bottom: 1rem !important;
-    color: var(--primary-text-color);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-}
+        .sidebar-header {
+            padding: 1.25rem;
+            text-align: center;
+            background: rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-header img {
+            max-width: 150px;
+        }
+        
+        .sidebar-title {
+            padding: 0.8rem 1.5rem;
+            color: var(--accent-color);
+            font-weight: 600;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 1rem;
+        }
 
-#sidebar-wrapper .sidebar-heading span {
-    color: var(--primary-text-color);
-}
+        #sidebar .nav-link {
+            padding: 0.8rem 1.5rem;
+            color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s ease-in-out;
+            font-weight: 500;
+            justify-content: flex-start;
+        }
+        
+        #sidebar .nav-link:hover, 
+        #sidebar .nav-link.active {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+        }
 
-.sidebar-logo {
-    width: 35px;
-    height: 35px;
-    object-fit: contain;
-}
+        #sidebar .nav-link.active:not([data-bs-toggle="collapse"]) {
+             border-left: 4px solid var(--accent-color);
+             padding-left: calc(1.5rem - 4px);
+        }
 
-#sidebar-wrapper .list-group {
-    width: 100%;
-    padding: 0 1rem;
-}
+        #sidebar .nav-link .feather {
+            margin-right: 1rem;
+            width: 20px;
+            height: 20px;
+        }
 
-/* --- Base Nav Item Style --- */
-#sidebar-wrapper .list-group-item {
-    background: transparent;
-    color: rgba(255, 255, 255, 0.8);
-    border: none;
-    border-radius: 12px;
-    margin-bottom: 8px;
-    padding: 0.8rem 1rem;
-    font-weight: 500;
-    transition: background-color 0.2s ease, color 0.2s ease;
-}
+        #sidebar .nav-link span {
+            flex-grow: 1;
+        }
 
-/* --- General Hover State (for any item) --- */
-#sidebar-wrapper .list-group-item:hover {
-    background: var(--secondary-color);
-    color: var(--primary-color);
-    font-weight: 600;
-}
+        #sidebar .nav-link .feather.ms-auto {
+            transition: transform 0.3s ease;
+        }
 
-/* --- Active State for Single Links (e.g., Dashboard) --- */
-#sidebar-wrapper .list-group-item.active:not([data-bs-toggle="collapse"]) {
-    background: var(--secondary-color);
-    color: var(--primary-color);
-    font-weight: 600;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
+        #sidebar .nav-link[aria-expanded="true"] .feather.ms-auto {
+            transform: rotate(180deg);
+        }
 
-/* --- Active State for PARENT Dropdown Trigger (e.g., Catalog) --- */
-/* This is the main fix: only text turns yellow, background stays transparent */
-#sidebar-wrapper a.list-group-item.active[data-bs-toggle="collapse"] {
-    background: transparent;
-    color: var(--secondary-color);
-    font-weight: 600;
-}
-/* On hover, the parent dropdown should still get the yellow background */
-#sidebar-wrapper a.list-group-item.active[data-bs-toggle="collapse"]:hover {
-    background: var(--secondary-color);
-    color: var(--primary-color);
-}
+        #sidebar .collapse .nav-link {
+            padding-left: 3.5rem;
+            font-size: 0.9em;
+            color: #d0d0d0;
+        }
+
+        #sidebar .collapse .nav-link:hover,
+        #sidebar .collapse .nav-link.active {
+            color: #fff;
+            background: #c88f00;
+        }
 
 
-/* --- Submenu Container --- */
-.list-group-submenu {
-    padding-left: 1rem;
-    background-color: transparent;
-    margin-top: -8px; 
-    margin-bottom: 8px;
-    border-left: 2px solid rgba(255, 255, 255, 0.2);
-    margin-left: 0.75rem;
-}
+        /* --- Main Content Styles --- */
+        #content {
+            width: 100%;
+            padding-left: var(--sidebar-width);
+            transition: all 0.3s;
+        }
 
-/* --- Submenu Item Base Style --- */
-.list-group-submenu .list-group-item {
-    margin-bottom: 2px;
-    padding: 0.6rem 1rem;
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.7);
-    border-radius: 8px;
-}
+        /* --- Header/Navbar Styles --- */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: calc(100% - var(--sidebar-width));
+            left: var(--sidebar-width);
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            z-index: 1020;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-toggler-btn {
+            background: transparent;
+            border: none;
+            color: var(--dark-gray);
+            cursor: pointer;
+            transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .sidebar-toggler-btn:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: var(--primary-color);
+        }
 
-/* --- Active State for SUBMENU Item (e.g., Products) --- */
-/* This item gets the full yellow background to show it's the current page */
-.list-group-submenu .list-group-item.active {
-    background: var(--secondary-color);
-    color: var(--primary-color);
-    font-weight: 600;
-}
+        .dropdown-menu-custom {
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+            padding: 0.5rem 0;
+        }
+        .dropdown-menu-custom .dropdown-item {
+            padding: 0.6rem 1.25rem;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s ease-in-out;
+            font-weight: 500;
+        }
+        .dropdown-menu-custom .dropdown-item .feather {
+            width: 18px;
+            height: 18px;
+            margin-right: 0.75rem;
+            color: var(--dark-gray);
+        }
+        .dropdown-menu-custom .dropdown-item:hover .feather {
+            color: var(--primary-color);
+        }
 
 
-/* --- Chevron Icon Rotation --- */
-.dropdown-indicator {
-    transition: transform 0.2s ease-in-out;
-}
-a[data-bs-toggle="collapse"][aria-expanded="true"] .dropdown-indicator {
-    transform: rotate(180deg);
-}
+        .main-content {
+            padding: 2rem;
+            margin-top: 70px; /* Height of navbar */
+        }
+        
+        /* --- Card Styles --- */
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .bg-primary-soft {
+            background-color: rgba(43, 127, 117, 0.1);
+            color: var(--primary-color);
+        }
+        .bg-accent-soft {
+            background-color: rgba(255, 214, 107, 0.2);
+            color: #c88f00;
+        }
 
-/* ==================================================
-   Header & Main Content (Unchanged)
-================================================== */
-#page-content-wrapper header {
-    position: fixed; top: 0; right: 0; left: 250px; z-index: 1000;
-    background-color: #ffffff; border-bottom: 1px solid #e0e0e0;
-    transition: left 0.25s ease-out;
-}
-#wrapper.toggled #page-content-wrapper header { left: 0; }
-#menu-toggle { cursor: pointer; }
-.user-avatar { width: 30px; height: 30px; object-fit: cover; }
-#datetime-display { color: var(--secondary-text-color); font-size: 0.9rem; }
-.navbar-collapse .btn-danger { padding: 0.25rem 0.75rem; font-size: 0.85rem; }
-#page-content-wrapper main {
-    margin-top: 90px; 
-}
-.primary-text { color: var(--primary-color); }
-.second-text { color: var(--primary-color); }
-.rounded-full { border-radius: 100%; }
-.table-custom-header { background-color: var(--primary-color); color: var(--primary-text-color); }
+        /* --- Table Styles --- */
+        .table {
+            vertical-align: middle;
+        }
+        .table thead {
+            background-color: var(--primary-color);
+            color: #fff;
+        }
+        .table img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
 
-/* ==================================================
-   Responsive Design (Unchanged)
-================================================== */
-@media (min-width: 992px) {
-    #sidebar-wrapper { margin-left: 0; }
-    #page-content-wrapper { min-width: 0; width: 100%; }
-    #wrapper.toggled #sidebar-wrapper { margin-left: -250px; }
-}
-@media (max-width: 991.98px) {
-    #sidebar-wrapper { margin-left: -250px; }
-    #page-content-wrapper { padding-left: 0; }
-    #wrapper.toggled #sidebar-wrapper { margin-left: 0; }
-    #page-content-wrapper header { left: 0; }
-    .header-right-items {
-        width: 100%; padding-top: 1rem; align-items: flex-start !important;
-        flex-direction: column; gap: 0.75rem;
-    }
-}
+      
+        .table img.product-img { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; }
+        
+        /* --- Sidebar Collapse Logic --- */
+        .wrapper.sidebar-collapsed #sidebar {
+            margin-left: calc(-1 * var(--sidebar-width));
+        }
 
+        .wrapper.sidebar-collapsed #content {
+            padding-left: 0;
+        }
+
+        .wrapper.sidebar-collapsed .navbar {
+            width: 100%;
+            left: 0;
+        }
+    

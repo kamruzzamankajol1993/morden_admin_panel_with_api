@@ -10,100 +10,163 @@ Dashboard
 @endsection
 
 @section('body')
- <main class="container-fluid px-4">
-                <div class="row g-3 my-4">
-                    <div class="col-md-3">
-                        <div class="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
-                            <div><h3 class="fs-2">720</h3><p class="fs-5 mb-0 text-muted">Total Products</p></div>
-                            <i class="fas fa-box-open fs-1 primary-text border rounded-full p-3"></i>
+  <main class="main-content">
+                <div class="container-fluid">
+                    <h2 class="mb-4">Dashboard</h2>
+
+                    <!-- Summary Cards -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card h-100">
+                                <div class="card-body d-flex align-items-center">
+                                    <div class="card-icon bg-primary-soft me-3">
+                                        <i data-feather="dollar-sign"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="text-muted mb-1">Total Sales</h6>
+                                        <h4 class="mb-0">$24,598.50</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card h-100">
+                                <div class="card-body d-flex align-items-center">
+                                    <div class="card-icon bg-accent-soft me-3">
+                                        <i data-feather="shopping-cart"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="text-muted mb-1">New Orders</h6>
+                                        <h4 class="mb-0">352</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card h-100">
+                                <div class="card-body d-flex align-items-center">
+                                    <div class="card-icon bg-primary-soft me-3">
+                                        <i data-feather="package"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="text-muted mb-1">Total Products</h6>
+                                        <h4 class="mb-0">1,280</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card h-100">
+                                <div class="card-body d-flex align-items-center">
+                                    <div class="card-icon bg-accent-soft me-3">
+                                        <i data-feather="user-plus"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="text-muted mb-1">New Customers</h6>
+                                        <h4 class="mb-0">86</h4>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
-                            <div><h3 class="fs-2">4,920</h3><p class="fs-5 mb-0 text-muted">Total Sales</p></div>
-                            <i class="fas fa-hand-holding-usd fs-1 primary-text border rounded-full p-3"></i>
+
+                    <!-- Charts Section -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-lg-7">
+                            <div class="card">
+                                <div class="card-header" style="background-color: var(--primary-color); color: white;">
+                                    Sales Overview
+                                </div>
+                                <div class="card-body">
+                                    <img src="https://placehold.co/600x300/f8f9fa/6c757d?text=Sales+Chart+Placeholder" class="img-fluid" alt="Sales Chart">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="card">
+                                <div class="card-header" style="background-color: var(--primary-color); color: white;">
+                                    Sales by Category
+                                </div>
+                                <div class="card-body">
+                                    <img src="https://placehold.co/400x300/f8f9fa/6c757d?text=Category+Chart+Placeholder" class="img-fluid" alt="Category Chart">
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
-                            <div><h3 class="fs-2">385</h3><p class="fs-5 mb-0 text-muted">Pending Orders</p></div>
-                            <i class="fas fa-truck fs-1 primary-text border rounded-full p-3"></i>
+
+                    <!-- Recent Orders Table -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Recent Orders</h5>
                         </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
-                            <div><h3 class="fs-2">25%</h3><p class="fs-5 mb-0 text-muted">Increase</p></div>
-                            <i class="fas fa-chart-line fs-1 primary-text border rounded-full p-3"></i>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Customer</th>
+                                            <th>Order ID</th>
+                                            <th>Product</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://placehold.co/40x40/2b7f75/ffffff?text=J" alt="User">
+                                                    <div class="ms-3">John Doe</div>
+                                                </div>
+                                            </td>
+                                            <td>#CL-1024</td>
+                                            <td>Men's T-Shirt</td>
+                                            <td>$25.00</td>
+                                            <td><span class="badge rounded-pill bg-success">Delivered</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://placehold.co/40x40/ffd66b/000000?text=S" alt="User">
+                                                    <div class="ms-3">Sarah Smith</div>
+                                                </div>
+                                            </td>
+                                            <td>#CL-1023</td>
+                                            <td>Women's Dress</td>
+                                            <td>$89.99</td>
+                                            <td><span class="badge rounded-pill bg-warning text-dark">Shipped</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://placehold.co/40x40/2b7f75/ffffff?text=M" alt="User">
+                                                    <div class="ms-3">Mike Johnson</div>
+                                                </div>
+                                            </td>
+                                            <td>#CL-1022</td>
+                                            <td>Kids Jeans</td>
+                                            <td>$45.50</td>
+                                            <td><span class="badge rounded-pill bg-danger">Cancelled</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://placehold.co/40x40/ffd66b/000000?text=E" alt="User">
+                                                    <div class="ms-3">Emily Ross</div>
+                                                </div>
+                                            </td>
+                                            <td>#CL-1021</td>
+                                            <td>Summer Scarf</td>
+                                            <td>$15.00</td>
+                                            <td><span class="badge rounded-pill bg-info">Processing</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="row my-5">
-                    <h3 class="fs-4 mb-3">Recent Orders</h3>
-                    <div class="col">
-                        <div class="table-responsive">
-                            <table class="table bg-white rounded shadow-sm table-hover align-middle">
-                                <thead class="table-custom-header">
-                                    <tr>
-                                        <th scope="col" width="50">#</th><th scope="col">Product</th><th scope="col">Customer</th><th scope="col">Price</th><th scope="col">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr><th scope="row">1</th><td>T-Shirt</td><td>John Doe</td><td>$15.00</td><td><span class="badge bg-success">Shipped</span></td></tr>
-                                    <tr><th scope="row">2</th><td>Jeans</td><td>Jane Smith</td><td>$45.50</td><td><span class="badge bg-warning text-dark">Processing</span></td></tr>
-                                    <tr><th scope="row">3</th><td>Hoodie</td><td>Mike Johnson</td><td>$29.99</td><td><span class="badge bg-success">Shipped</span></td></tr>
-                                    <tr><th scope="row">4</th><td>Formal Shirt</td><td>Emily Brown</td><td>$32.00</td><td><span class="badge bg-danger">Cancelled</span></td></tr>
-                                    <tr><th scope="row">5</th><td>Kurta</td><td>Ahmed Khan</td><td>$22.75</td><td><span class="badge bg-warning text-dark">Processing</span></td></tr>
-                                    <tr><th scope="row">6</th><td>Saree</td><td>Priya Patel</td><td>$75.00</td><td><span class="badge bg-info">Delivered</span></td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                 <div class="row my-5">
-                    <h3 class="fs-4 mb-3">Recent Orders</h3>
-                    <div class="col">
-                        <div class="table-responsive">
-                            <table class="table bg-white rounded shadow-sm table-hover align-middle">
-                                <thead class="table-custom-header">
-                                    <tr>
-                                        <th scope="col" width="50">#</th><th scope="col">Product</th><th scope="col">Customer</th><th scope="col">Price</th><th scope="col">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr><th scope="row">1</th><td>T-Shirt</td><td>John Doe</td><td>$15.00</td><td><span class="badge bg-success">Shipped</span></td></tr>
-                                    <tr><th scope="row">2</th><td>Jeans</td><td>Jane Smith</td><td>$45.50</td><td><span class="badge bg-warning text-dark">Processing</span></td></tr>
-                                    <tr><th scope="row">3</th><td>Hoodie</td><td>Mike Johnson</td><td>$29.99</td><td><span class="badge bg-success">Shipped</span></td></tr>
-                                    <tr><th scope="row">4</th><td>Formal Shirt</td><td>Emily Brown</td><td>$32.00</td><td><span class="badge bg-danger">Cancelled</span></td></tr>
-                                    <tr><th scope="row">5</th><td>Kurta</td><td>Ahmed Khan</td><td>$22.75</td><td><span class="badge bg-warning text-dark">Processing</span></td></tr>
-                                    <tr><th scope="row">6</th><td>Saree</td><td>Priya Patel</td><td>$75.00</td><td><span class="badge bg-info">Delivered</span></td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                 <div class="row my-5">
-                    <h3 class="fs-4 mb-3">Recent Orders</h3>
-                    <div class="col">
-                        <div class="table-responsive">
-                            <table class="table bg-white rounded shadow-sm table-hover align-middle">
-                                <thead class="table-custom-header">
-                                    <tr>
-                                        <th scope="col" width="50">#</th><th scope="col">Product</th><th scope="col">Customer</th><th scope="col">Price</th><th scope="col">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr><th scope="row">1</th><td>T-Shirt</td><td>John Doe</td><td>$15.00</td><td><span class="badge bg-success">Shipped</span></td></tr>
-                                    <tr><th scope="row">2</th><td>Jeans</td><td>Jane Smith</td><td>$45.50</td><td><span class="badge bg-warning text-dark">Processing</span></td></tr>
-                                    <tr><th scope="row">3</th><td>Hoodie</td><td>Mike Johnson</td><td>$29.99</td><td><span class="badge bg-success">Shipped</span></td></tr>
-                                    <tr><th scope="row">4</th><td>Formal Shirt</td><td>Emily Brown</td><td>$32.00</td><td><span class="badge bg-danger">Cancelled</span></td></tr>
-                                    <tr><th scope="row">5</th><td>Kurta</td><td>Ahmed Khan</td><td>$22.75</td><td><span class="badge bg-warning text-dark">Processing</span></td></tr>
-                                    <tr><th scope="row">6</th><td>Saree</td><td>Priya Patel</td><td>$75.00</td><td><span class="badge bg-info">Delivered</span></td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                </main>
+            </main>
 @endsection
 
 @section('script')

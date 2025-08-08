@@ -2,185 +2,176 @@
      $usr = Auth::user();
  @endphp
 
- <aside class="sidebar-container" id="sidebar-wrapper">
-            <div class="sidebar-heading text-center py-4 fs-4 fw-bold d-flex align-items-center justify-content-center">
-                <img src="{{asset('/')}}{{$icon}}" alt="Logo" class="sidebar-logo me-2">
-                <span>{{$ins_name}}</span>
+ <nav id="sidebar">
+            <div class="sidebar-header">
+                <img src="{{asset('/')}}public/logo.png" alt="{{ $ins_name }} Logo" class="img-fluid">
             </div>
-            
-            <div class="list-group list-group-flush my-3" id="sidebar-nav-accordion">
+            <ul class="nav flex-column" id="sidebar-menu">
                  @if ($usr->can('dashboardView'))
-                <a href="{{route('home')}}" class="list-group-item list-group-item-action {{ Route::is('home')  ? 'active' : '' }}">
-                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-                </a>
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('home')  ? 'active' : '' }}" href="{{route('home')}}">
+                        <i data-feather="grid"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
                 @endif
+                </li>
+                <li class="nav-item">
+                     <a class="nav-link" href="#ordersSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="ordersSubmenu">
+                        <i data-feather="shopping-bag"></i>
+                        <span>Orders</span>
+                        <i data-feather="chevron-down" class="ms-auto"></i>
+                    </a>
+                    <ul class="collapse list-unstyled" id="ordersSubmenu" data-bs-parent="#sidebar-menu">
+                        <li><a class="nav-link" href="#">All Orders</a></li>
+                        <li><a class="nav-link" href="#">Pending</a></li>
+                        <li><a class="nav-link" href="#">Shipped</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#productsSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="productsSubmenu">
+                        <i data-feather="tag"></i>
+                        <span>Products</span>
+                        <i data-feather="chevron-down" class="ms-auto"></i>
+                    </a>
+                    <ul class="collapse list-unstyled" id="productsSubmenu" data-bs-parent="#sidebar-menu">
+                        <li><a class="nav-link" href="#">All Products</a></li>
+                        <li><a class="nav-link" href="#">Add New</a></li>
+                        <li><a class="nav-link" href="#">Categories</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i data-feather="users"></i>
+                        <span>Customers</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i data-feather="bar-chart-2"></i>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i data-feather="percent"></i>
+                        <span>Promotions</span>
+                    </a>
+                </li>
 
-                <a href="#salesSubmenu" data-bs-toggle="collapse" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                    <div><i class="fas fa-money-bill-wave me-2"></i>Sales</div><i class="fas fa-chevron-down dropdown-indicator"></i>
-                </a>
-                <div class="collapse" id="salesSubmenu" data-bs-parent="#sidebar-nav-accordion">
-                    <div class="list-group-submenu">
-                        <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-shopping-cart me-2"></i>Orders</a>
-                        <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-file-invoice-dollar me-2"></i>Invoices</a>
-                        <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-truck-fast me-2"></i>Shipments</a>
-                        <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-undo me-2"></i>Returns</a>
-                    </div>
-                </div>
+                <li class="sidebar-title">
+                    <span>Inventory & Purchase</span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#purchaseSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="purchaseSubmenu">
+                        <i data-feather="truck"></i>
+                        <span>Purchase</span>
+                        <i data-feather="chevron-down" class="ms-auto"></i>
+                    </a>
+                    <ul class="collapse list-unstyled" id="purchaseSubmenu" data-bs-parent="#sidebar-menu">
+                        <li><a class="nav-link" href="#">Purchase Return</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i data-feather="briefcase"></i>
+                        <span>Supplier</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i data-feather="archive"></i>
+                        <span>Stock</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i data-feather="alert-triangle"></i>
+                        <span>Damage Product</span>
+                    </a>
+                </li>
 
-                <a href="#catalogSubmenu" data-bs-toggle="collapse" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                    <div><i class="fas fa-book-open me-2"></i>Catalog</div><i class="fas fa-chevron-down dropdown-indicator"></i>
-                </a>
-                <div class="collapse" id="catalogSubmenu" data-bs-parent="#sidebar-nav-accordion">
-                    <div class="list-group-submenu">
-                        <a href="products.html" class="list-group-item list-group-item-action"><i class="fas fa-box-open me-2"></i>Products</a>
-                        <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-tags me-2"></i>Categories</a>
-                        <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-copyright me-2"></i>Brands</a>
-                        <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-star me-2"></i>Reviews</a>
-                    </div>
-                </div>
+                <li class="sidebar-title">
+                    <span>Report</span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#reportSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="reportSubmenu">
+                        <i data-feather="file-text"></i>
+                        <span>Report</span>
+                        <i data-feather="chevron-down" class="ms-auto"></i>
+                    </a>
+                    <ul class="collapse list-unstyled" id="reportSubmenu" data-bs-parent="#sidebar-menu">
+                        <li><a class="nav-link" href="#">Sales Report</a></li>
+                        <li><a class="nav-link" href="#">Inventory Report</a></li>
+                        <li><a class="nav-link" href="#">Customer Report</a></li>
+                    </ul>
+                </li>
+                @if ( $usr->can('userAdd') || $usr->can('userView') ||  $usr->can('userDelete') ||  $usr->can('userUpdate') || $usr->can('designationAdd') || $usr->can('designationView') ||  $usr->can('designationDelete') ||  $usr->can('designationUpdate') || $usr->can('branchAdd') || $usr->can('branchView') ||  $usr->can('branchDelete') ||  $usr->can('branchUpdate'))
+                <li class="sidebar-title">
+                    <span>Settings</span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#accountSettingsSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="accountSettingsSubmenu">
+                        <i data-feather="user"></i>
+                        <span>Account</span>
+                        <i data-feather="chevron-down" class="ms-auto"></i>
+                    </a>
+                    <ul class="collapse list-unstyled {{Route::is('users.show') || Route::is('users.index') || Route::is('users.edit') || Route::is('users.create') || Route::is('branch.index') || Route::is('branch.edit') || Route::is('branch.create') || Route::is('designation.index') || Route::is('designation.edit') || Route::is('designation.create') ? 'show' : '' }}" id="accountSettingsSubmenu" data-bs-parent="#sidebar-menu">
 
-                <a href="#customerSubmenu" data-bs-toggle="collapse" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                    <div><i class="fas fa-users me-2"></i>Customers</div><i class="fas fa-chevron-down dropdown-indicator"></i>
-                </a>
-                <div class="collapse" id="customerSubmenu" data-bs-parent="#sidebar-nav-accordion">
-                    <div class="list-group-submenu">
-                        <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-user-friends me-2"></i>Customer List</a>
-                        <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-user-tag me-2"></i>Customer Groups</a>
-                    </div>
-                </div>
-                
-                <a href="#reportsSubmenu" data-bs-toggle="collapse" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                    <div><i class="fas fa-chart-pie me-2"></i>Reports</div><i class="fas fa-chevron-down dropdown-indicator"></i>
-                </a>
-                <div class="collapse" id="reportsSubmenu" data-bs-parent="#sidebar-nav-accordion">
-                    <div class="list-group-submenu">
-                        <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-chart-line me-2"></i>Sales Reports</a>
-                        <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-chart-bar me-2"></i>Product Reports</a>
-                    </div>
-                </div>
+                          @if ($usr->can('designationAdd') || $usr->can('designationView') ||  $usr->can('designationDelete') ||  $usr->can('designationUpdate'))
 
-                <a href="#settingsSubmenu" data-bs-toggle="collapse" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                    <div><i class="fas fa-cogs me-2"></i>Settings</div><i class="fas fa-chevron-down dropdown-indicator"></i>
-                </a>
-                <div class="collapse" id="settingsSubmenu" data-bs-parent="#sidebar-nav-accordion">
-                    <div class="list-group-submenu">
-                        <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-wrench me-2"></i>General</a>
-                        <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-user-shield me-2"></i>Users & Roles</a>
-                    </div>
-                </div>
-
-                <a href="#settingsSubmenu1" data-bs-toggle="collapse" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                    <div><i class="fas fa-cogs me-2"></i>Settings</div><i class="fas fa-chevron-down dropdown-indicator"></i>
-                </a>
-                <div class="collapse" id="settingsSubmenu1" data-bs-parent="#sidebar-nav-accordion">
-                    <div class="list-group-submenu">
-                        <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-wrench me-2"></i>General</a>
-                        <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-user-shield me-2"></i>Users & Roles</a>
-                    </div>
-                </div>
-
-                <a href="#settingsSubmenu" data-bs-toggle="collapse" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                    <div><i class="fas fa-cogs me-2"></i>Settings</div><i class="fas fa-chevron-down dropdown-indicator"></i>
-                </a>
-                <div class="collapse" id="settingsSubmenu" data-bs-parent="#sidebar-nav-accordion">
-                    <div class="list-group-submenu">
-                        <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-wrench me-2"></i>General</a>
-                        <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-user-shield me-2"></i>Users & Roles</a>
-                    </div>
-                </div>
-
-                <a href="#settingsSubmenu" data-bs-toggle="collapse" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                    <div><i class="fas fa-cogs me-2"></i>Settings</div><i class="fas fa-chevron-down dropdown-indicator"></i>
-                </a>
-                <div class="collapse" id="settingsSubmenu" data-bs-parent="#sidebar-nav-accordion">
-                    <div class="list-group-submenu">
-                        <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-wrench me-2"></i>General</a>
-                        <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-user-shield me-2"></i>Users & Roles</a>
-                    </div>
-                </div>
-
-                <a href="#settingsSubmenu" data-bs-toggle="collapse" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                    <div><i class="fas fa-cogs me-2"></i>Settings</div><i class="fas fa-chevron-down dropdown-indicator"></i>
-                </a>
-                <div class="collapse" id="settingsSubmenu" data-bs-parent="#sidebar-nav-accordion">
-                    <div class="list-group-submenu">
-                        <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-wrench me-2"></i>General</a>
-                        <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-user-shield me-2"></i>Users & Roles</a>
-                    </div>
-                </div>
-
-                <a href="#settingsSubmenu" data-bs-toggle="collapse" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                    <div><i class="fas fa-cogs me-2"></i>Settings</div><i class="fas fa-chevron-down dropdown-indicator"></i>
-                </a>
-                <div class="collapse" id="settingsSubmenu" data-bs-parent="#sidebar-nav-accordion">
-                    <div class="list-group-submenu">
-                        <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-wrench me-2"></i>General</a>
-                        <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-user-shield me-2"></i>Users & Roles</a>
-                    </div>
-                </div>
-@if ( $usr->can('userAdd') || $usr->can('userView') ||  $usr->can('userDelete') ||  $usr->can('userUpdate') || $usr->can('designationAdd') || $usr->can('designationView') ||  $usr->can('designationDelete') ||  $usr->can('designationUpdate') || $usr->can('branchAdd') || $usr->can('branchView') ||  $usr->can('branchDelete') ||  $usr->can('branchUpdate'))
-                <a href="#settingsSubmenuTwo" data-bs-toggle="collapse" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center {{Route::is('designation.index') || Route::is('designation.edit') || Route::is('designation.create')|| Route::is('users.index') || Route::is('users.edit') || Route::is('users.create') || Route::is('branch.index') || Route::is('branch.edit') || Route::is('branch.create') ? 'active' : '' }}">
-                    <div><i class="fas fa-cogs me-2"></i>Account Setting</div><i class="fas fa-chevron-down dropdown-indicator"></i>
-                </a>
-                <div class="collapse" id="settingsSubmenuTwo" data-bs-parent="#sidebar-nav-accordion">
-                    <div class="list-group-submenu">
-                       
-
-                         @if ($usr->can('designationAdd') || $usr->can('designationView') ||  $usr->can('designationDelete') ||  $usr->can('designationUpdate'))
-
-                        <a class="list-group-item list-group-item-action {{ Route::is('designation.index') || Route::is('designation.edit') || Route::is('designation.create') ? 'active' : '' }}" href="{{ route('designation.index') }}">Designation</a>
+                        <a class="nav-link {{ Route::is('designation.index') || Route::is('designation.edit') || Route::is('designation.create') ? 'active' : '' }}" href="{{ route('designation.index') }}">Designation</a>
                    
                     @endif
 
 
                           @if ($usr->can('branchAdd') || $usr->can('branchView') ||  $usr->can('branchDelete') ||  $usr->can('branchUpdate'))
-                   
-                        <a class="list-group-item list-group-item-action {{ Route::is('branch.index') || Route::is('branch.edit') || Route::is('branch.create') ? 'active' : '' }}" href="{{ route('branch.index') }}">Branch/Agent Organization</a>
-                    
-                    @endif 
-                   
+
+                        <a class="nav-link {{ Route::is('branch.index') || Route::is('branch.edit') || Route::is('branch.create') ? 'active' : '' }}" href="{{ route('branch.index') }}">Branch</a>
+
+                    @endif
+
 
                     @if ($usr->can('userAdd') || $usr->can('userView') ||  $usr->can('userDelete') ||  $usr->can('userUpdate'))
-                    
-                        <a class="list-group-item list-group-item-action {{ Route::is('users.show') || Route::is('users.index') || Route::is('users.edit') || Route::is('users.create') ? 'active' : '' }}" href="{{ route('users.index') }}">Partner Management</a>
-                    
+
+                        <a class="nav-link {{ Route::is('users.show') || Route::is('users.index') || Route::is('users.edit') || Route::is('users.create') ? 'active' : '' }}" href="{{ route('users.index') }}">User</a>
+
                     @endif
-                    </div>
-                </div>
+                       
+                    </ul>
+                </li>
                 @endif
+                   @if ($usr->can('permissionAdd') || $usr->can('permissionView') ||  $usr->can('permissionDelete') ||  $usr->can('permissionUpdate') || $usr->can('roleAdd') || $usr->can('roleView') ||  $usr->can('roleUpdate') ||  $usr->can('roleDelete') || $usr->can('panelSettingAdd') || $usr->can('panelSettingView') ||  $usr->can('panelSettingDelete') ||  $usr->can('panelSettingUpdate'))
+                 <li class="nav-item">
+                    <a class="nav-link" href="#generalSettingsSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="generalSettingsSubmenu">
+                        <i data-feather="settings"></i>
+                        <span>General</span>
+                        <i data-feather="chevron-down" class="ms-auto"></i>
+                    </a>
+                    <ul class="collapse list-unstyled {{Route::is('roles.show') || Route::is('permissions.index') || Route::is('permissions.edit') || Route::is('permissions.create') || Route::is('roles.index') || Route::is('roles.edit') || Route::is('roles.create') || Route::is('systemInformation.index') || Route::is('systemInformation.edit') || Route::is('systemInformation.create') ? 'show' : '' }}" id="generalSettingsSubmenu" data-bs-parent="#sidebar-menu">
 
-                 @if ($usr->can('permissionAdd') || $usr->can('permissionView') ||  $usr->can('permissionDelete') ||  $usr->can('permissionUpdate') || $usr->can('roleAdd') || $usr->can('roleView') ||  $usr->can('roleUpdate') ||  $usr->can('roleDelete') || $usr->can('panelSettingAdd') || $usr->can('panelSettingView') ||  $usr->can('panelSettingDelete') ||  $usr->can('panelSettingUpdate'))
-
-                <a href="#settingsSubmenuOne" data-bs-toggle="collapse" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center {{Route::is('roles.show') || Route::is('permissions.index') || Route::is('permissions.edit') || Route::is('permissions.create') || Route::is('roles.index') || Route::is('roles.edit') || Route::is('roles.create') || Route::is('systemInformation.index') || Route::is('systemInformation.edit') || Route::is('systemInformation.create') ? 'active' : '' }}">
-                    <div><i class="fas fa-cogs me-2"></i>General Setting</div><i class="fas fa-chevron-down dropdown-indicator"></i>
-                </a>
-                <div class="collapse" id="settingsSubmenuOne" data-bs-parent="#sidebar-nav-accordion">
-                    <div class="list-group-submenu">
-
-
-                                 @if ($usr->can('panelSettingAdd') || $usr->can('panelSettingView') ||  $usr->can('panelSettingDelete') ||  $usr->can('panelSettingUpdate'))
+                            @if ($usr->can('panelSettingAdd') || $usr->can('panelSettingView') ||  $usr->can('panelSettingDelete') ||  $usr->can('panelSettingUpdate'))
                    
-                        <a class="list-group-item list-group-item-action {{ Route::is('systemInformation.index') || Route::is('systemInformation.edit') || Route::is('systemInformation.create') ? 'active' : '' }}" href="{{ route('systemInformation.index') }}">Panel Settings</a>
+                        <a class="nav-link {{ Route::is('systemInformation.index') || Route::is('systemInformation.edit') || Route::is('systemInformation.create') ? 'active' : '' }}" href="{{ route('systemInformation.index') }}">Panel Settings</a>
                     
                     @endif
 
                     @if ($usr->can('roleAdd') || $usr->can('roleView') ||  $usr->can('roleEdit') ||  $usr->can('roleDelete'))
                    
-                        <a class="list-group-item list-group-item-action {{Route::is('roles.show') || Route::is('roles.index') || Route::is('roles.edit') || Route::is('roles.create') ? 'active' : '' }}" href="{{ route('roles.index') }}">Role Management</a>
+                        <a class="nav-link {{Route::is('roles.show') || Route::is('roles.index') || Route::is('roles.edit') || Route::is('roles.create') ? 'active' : '' }}" href="{{ route('roles.index') }}">Role Management</a>
                     
                     @endif
 
                     @if ($usr->can('permissionAdd') || $usr->can('permissionView') ||  $usr->can('permissionDelete') ||  $usr->can('permissionUpdate'))
                    
-                        <a class="list-group-item list-group-item-action {{ Route::is('permissions.index') || Route::is('permissions.edit') || Route::is('permissions.create') ? 'active' : '' }}" href="{{ route('permissions.index') }}">Permission Management</a>
+                        <a class="nav-link {{ Route::is('permissions.index') || Route::is('permissions.edit') || Route::is('permissions.create') ? 'active' : '' }}" href="{{ route('permissions.index') }}">Permission Management</a>
                     
                     @endif
-                    </div>
-                </div>
-                @endif
 
-              
-            </div>
-        </aside>
+                    </ul>
+                </li>
+                @endif
+            </ul>
+        </nav>
 
  

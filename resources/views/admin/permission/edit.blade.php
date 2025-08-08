@@ -14,25 +14,13 @@ Permission Management | {{ $ins_name }}
 
 @section('body')
 
-<div class="dashboard-body">
+ <main class="main-content">
+                <div class="container-fluid">
+                    <h2 class="mb-4">Update Permission</h2>
 
-    <div class="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
-        <!-- Breadcrumb Start -->
-<div class="breadcrumb mb-24">
-<ul class="flex-align gap-4">
-<li><a href="{{route('home')}}" class="text-gray-200 fw-normal text-15 hover-text-main-600">Home</a></li>
-<li> <span class="text-gray-500 fw-normal d-flex"><i class="ph ph-caret-right"></i></span> </li>
-<li><span class="text-main-600 fw-normal text-15">Permission Management</span></li>
-</ul>
-</div>
-</div>
-<!-- Breadcrumb End -->
-<div class="card overflow-hidden">
-    <div class="card-header">
-        Update Permission
-    </div>
-    <div class="card-body">
-        <form id="form" method="post" action="{{ route('permissions.update',$pers)}}" enctype="multipart/form-data">
+                    <div class="card">
+                        <div class="card-body">
+                           <form id="form" method="post" action="{{ route('permissions.update',$pers)}}" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             <div class="row">
@@ -88,14 +76,12 @@ Permission Management | {{ $ins_name }}
 
 
         </form>
-    </div>
-</div>
-    </div>
+                        </div>
+                    </div>
+                </div>
+               
+            </main>
 
-
-
-
-@include('admin.permission._partial.addModal')
 
 @endsection
 

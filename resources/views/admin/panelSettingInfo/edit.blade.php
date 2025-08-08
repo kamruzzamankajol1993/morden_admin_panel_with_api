@@ -14,25 +14,13 @@ Panel Setting | {{ $ins_name }}
 
 @section('body')
 
-<div class="dashboard-body">
+<main class="main-content">
+                <div class="container-fluid">
+                    <h2 class="mb-4">Update Panel Setting</h2>
 
-    <div class="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
-        <!-- Breadcrumb Start -->
-<div class="breadcrumb mb-24">
-<ul class="flex-align gap-4">
-<li><a href="{{route('home')}}" class="text-gray-200 fw-normal text-15 hover-text-main-600">Home</a></li>
-<li> <span class="text-gray-500 fw-normal d-flex"><i class="ph ph-caret-right"></i></span> </li>
-<li><span class="text-main-600 fw-normal text-15">Panel Setting</span></li>
-</ul>
-</div>
-</div>
-<!-- Breadcrumb End -->
-<div class="card overflow-hidden">
-    <div class="card-header">
-        Update Panel Information
-    </div>
-    <div class="card-body">
-        @include('flash_message')
+                    <div class="card">
+                        <div class="card-body">
+                        @include('flash_message')
 
                         <form method="post" action="{{ route('systemInformation.update',$panelSettingInfo->id)}}" enctype="multipart/form-data" id="form" data-parsley-validate="">
                             @csrf
@@ -90,11 +78,7 @@ Panel Setting | {{ $ins_name }}
                                     <input type="number" class="form-control" value="{{ $panelSettingInfo->charge }}" name="charge" id="" placeholder="Service Charge" required>
                                 </div>
 
-                                          <div class="col-xl-6 col-xxl-6 col-sm-6 mb-3">
-                <label class="form-label">BD To USD Conversation<span class="text-red font-w900">*</span>  </label>
-                <small class="text-danger">please type here the exchange rate</small>
-                <input type="text" class="form-control" name="usdollar" value="{{ $panelSettingInfo->usdollar }}" id="" placeholder="D To USD Conversation" required>
-            </div>
+                        
 
 
                                 <div class="col-xl-12 col-xxl-12 col-sm-12 mb-3">
@@ -131,12 +115,11 @@ Panel Setting | {{ $ins_name }}
 
 
                         </form>
-    </div>
-</div>
-    </div>
-
-
-
+                        </div>
+                    </div>
+                </div>
+               
+            </main>
 
 
 @endsection

@@ -15,6 +15,9 @@ Panel Setting | {{ $ins_name }}
 @section('body')
 
 
+
+
+
 <div class="content-body default-height">
     <div class="container-fluid">
         <div class="page-titles">

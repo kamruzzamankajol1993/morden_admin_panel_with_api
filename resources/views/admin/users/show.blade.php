@@ -2,7 +2,7 @@
 
 @section('title')
 
-Partners Management | {{ $ins_name }}
+User Management | {{ $ins_name }}
 
 @endsection
 
@@ -35,31 +35,13 @@ Partners Management | {{ $ins_name }}
 
 @section('body')
 
-<div class="dashboard-body">
+<main class="main-content">
+                <div class="container-fluid">
+                    <h2 class="mb-4">User Profile Overview</h2>
 
-    <div class="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
-        <!-- Breadcrumb Start -->
-<div class="breadcrumb mb-24">
-<ul class="flex-align gap-4">
-<li><a href="{{route('home')}}" class="text-gray-200 fw-normal text-15 hover-text-main-600">Home</a></li>
-<li> <span class="text-gray-500 fw-normal d-flex"><i class="ph ph-caret-right"></i></span> </li>
-<li><span class="text-main-600 fw-normal text-15">Partners Management</span></li>
-</ul>
-</div>
-<!-- Breadcrumb End -->
-
-
-
-    </div>
-   
-
-    <div class="card overflow-hidden shadow-lg border-0 rounded-4">
-         <div class="card-header text-white text-center py-4 " style="background-color: #652E89 !important">
-                    <h3 class="mb-0" style="color:white;"><i class="bi bi-person-circle me-2"></i>{{ $user->name }}</h3>
-                    <small>User Profile Overview</small>
-                </div>
-        <div class="card-body">
-             <!-- Tabs -->
+                    <div class="card">
+                        <div class="card-body">
+                       <!-- Tabs -->
                     <ul class="nav nav-tabs mb-4" id="userTab" role="tablist">
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab">
@@ -154,13 +136,12 @@ Partners Management | {{ $ins_name }}
                             </div>
                         </div>
                     </div> <!-- tab content -->
-           
+                        </div>
+                    </div>
+                </div>
+               
+            </main>
 
-    
-</div>
-
-    </div>
-</div>
 @endsection
 
 @section('script')

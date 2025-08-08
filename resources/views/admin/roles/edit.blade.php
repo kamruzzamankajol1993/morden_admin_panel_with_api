@@ -8,22 +8,14 @@ Role Management | {{ $ins_name }}
 @endsection
 
 @section('body')
-<div class="dashboard-body">
-    <div class="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
-        <div class="breadcrumb mb-24">
-            <ul class="flex-align gap-4">
-                <li><a href="{{route('home')}}" class="text-gray-200 fw-normal text-15 hover-text-main-600">Home</a></li>
-                <li><span class="text-gray-500 fw-normal d-flex"><i class="ph ph-caret-right"></i></span></li>
-                <li><span class="text-main-600 fw-normal text-15">Role Management</span></li>
-            </ul>
-        </div>
-    </div>
-    <div class="card overflow-hidden">
-        <div class="card-header">
-            Update Role
-        </div>
-        <div class="card-body">
-            @include('flash_message')
+
+<main class="main-content">
+                <div class="container-fluid">
+                    <h2 class="mb-4">Update Role</h2>
+
+                    <div class="card">
+                        <div class="card-body">
+                     @include('flash_message')
 
             <form method="POST" action="{{ route('roles.update', $role->id) }}">
                 @csrf
@@ -59,9 +51,12 @@ Role Management | {{ $ins_name }}
                     </div>
                 </div>
             </form>
-        </div>
-    </div>
-</div>
+                        </div>
+                    </div>
+                </div>
+               
+            </main>
+
 @endsection
 
 @section('script')

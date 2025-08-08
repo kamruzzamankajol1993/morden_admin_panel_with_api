@@ -13,92 +13,52 @@ Designation Management | {{ $ins_name }}
 
 
 @section('body')
-<div class="dashboard-body">
-
-    <div class="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
-        <!-- Breadcrumb Start -->
-<div class="breadcrumb mb-24">
-<ul class="flex-align gap-4">
-<li><a href="{{route('home')}}" class="text-gray-200 fw-normal text-15 hover-text-main-600">Home</a></li>
-<li> <span class="text-gray-500 fw-normal d-flex"><i class="ph ph-caret-right"></i></span> </li>
-<li><span class="text-main-600 fw-normal text-15">Designation Management</span></li>
-</ul>
-</div>
-<!-- Breadcrumb End -->
 
 
+<main class="main-content">
+                <div class="container-fluid">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+                        <h2 class="mb-0">Designation List</h2>
+                        <div class="d-flex align-items-center">
+                            <form class="d-flex me-2" role="search">
+                                <input class="form-control" id="searchInput" type="search" placeholder="Search designations..." aria-label="Search">
+                            </form>
+                            @if (Auth::user()->can('designationAdd'))
+                            <a type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn text-white" style="background-color: var(--primary-color); white-space: nowrap;">
+                                <i data-feather="plus" class="me-1" style="width:18px; height:18px;"></i> Add New Designation
+                            </a>
+                            @endif
+                        </div>
+                    </div>
 
-        <!-- Breadcrumb Right Start -->
-        <div class="flex-align gap-8 flex-wrap">
-            {{-- <div class="position-relative text-gray-500 flex-align gap-4 text-13">
-                <span class="text-inherit">Sort by: </span>
-                <div class="flex-align text-gray-500 text-13 border border-gray-100 rounded-4 ps-20 focus-border-main-600 bg-white">
-                    <span class="text-lg"><i class="ph ph-funnel-simple"></i></span>
-                    <select class="form-control ps-8 pe-20 py-16 border-0 text-inherit rounded-4 text-center">
-                        <option value="1" selected>Popular</option>
-                        <option value="1">Latest</option>
-                        <option value="1">Trending</option>
-                        <option value="1">Matches</option>
-                    </select>
-                </div>
-            </div> --}}
-            <div class="flex-align text-gray-500 text-13 border border-gray-100 rounded-4 ps-20 focus-border-main-600 bg-white">
-                <span class="text-lg"><i class="ph ph-layout"></i></span>
-               <select class="form-control ps-8 pe-20 py-16 border-0 text-inherit rounded-4 text-center" id="invoiceFilter">
-                    <option value="" selected disabled>Export</option>
-                    <option value="excel">Excel</option>
-                    <option value="pdf">Pdf</option>
-                </select>
-            </div>
-
-            <div class="flex-align text-gray-500 text-13">
-          
-
-            @if (Auth::user()->can('designationAdd'))
-
-            <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-primary btn-sm">
-                <i class="fas fa-plus me-2"></i> Add Name
-            </button>
-
-            @endif
-            </div>
-        </div>
-        <!-- Breadcrumb Right End -->
-
-    </div>
-   
-
-    <div class="card overflow-hidden">
-        <div class="card-body">
-            @include('flash_message')
-                <div class="d-flex justify-content-between mb-3">
-        <h4></h4>
-        <input type="text" id="searchInput" class="form-control w-25" placeholder="Search...">
-    </div>
-
-
-             <div class="table-responsive mt-5">
-        <table class="table table-bordered table-hover">
-            <thead class="table-light">
-                <tr>
-                    <th>Sl</th>
+                    <div class="card">
+                        <div class="card-body">
+                            @include('flash_message')
+                            <div class="table-responsive">
+                                <table class="table table-hover  table-bordered">
+                                    <thead>
+                                        <tr>
+                                      <th>Sl</th>
                     <th class="sortable" data-column="name">Designation Name</th>
                     <th >Action</th>
-                </tr>
-            </thead>
-           <tbody id="tableBody"></tbody>
-        </table>
-    </div>
+                                        </tr>
+                                    </thead>
 
-   <nav>
+                                     <tbody id="tableBody"></tbody>
+
+                                </table>
+                            </div>
+                        </div>
+                         <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+                                <div class="text-muted"></div>
+                                <nav>
        <ul class="pagination justify-content-center" id="pagination"></ul>
     </nav>
-        </div>
-        
-    </div>
+                            </div>
+                    </div>
+                </div>
+</main>
 
-    
-</div>
 
 
 @include('admin.designation._partial.addModal')

@@ -33,12 +33,14 @@
             <td>${group.group_name}</td>
             <td>${permissions}</td>
             <td>
+
+
                 
 
-            ${res.can_edit ? `<a href="${routes.edit(group.first_permission_id)}" class="btn btn-sm btn-primary btn-custom-sm"><i class="fa fa-edit"></i></a>` : ''}
+            ${res.can_edit ? `<a href="${routes.edit(group.first_permission_id)}" class="btn btn-sm btn-light"><i class="fa fa-edit"></i></a>` : ''}
 
 
-                ${res.can_delete ? `<button class="btn btn-sm btn-danger btn-delete btn-custom-sm" data-id="${group.first_permission_id}"><i class="fa fa-trash"></i></button>` : ''}
+                ${res.can_delete ? `<a class="btn-delete btn btn-sm btn-light text-danger" data-id="${group.first_permission_id}"><i class="fa fa-trash"></i></a>` : ''}
             </td>
         </tr>`;
 });
@@ -142,18 +144,18 @@
     var exportInvoicesUrl = "{{ route('downloadPermissionExcel') }}";
     var exportInvoicesUrlPdf = "{{ route('downloadPermissionPdf') }}";
 
-    document.getElementById('invoiceFilter').addEventListener('change', function() {
-    var selected = this.value;
-    if (!selected) return;
+    // Select all items with class invoiceFilter
+    document.querySelectorAll('.invoiceFilter').forEach(function(item) {
+        item.addEventListener('click', function(e) {
+            e.preventDefault(); // Prevent <a href="#"> from triggering scroll
+            var selected = this.getAttribute('data-value');
 
+            if (!selected) return;
 
-    if( selected == 'excel'){
+            var url = selected === 'excel' ? exportInvoicesUrl : exportInvoicesUrlPdf;
 
-    var url = `${exportInvoicesUrl}`;
-    }else{
- var url = `${exportInvoicesUrlPdf}`;
-    }
-
-    window.location.href = url;
-});
+            // Redirect to download route
+            window.location.href = url;
+        });
+    });
 </script>

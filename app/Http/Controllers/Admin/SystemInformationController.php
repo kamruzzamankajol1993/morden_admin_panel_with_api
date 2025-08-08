@@ -187,7 +187,7 @@ $panelSettingInfo = SystemInformation::where('branch_id',Auth::user()->branch_id
                 $systemInformation->develop_by = $request->develop_by;
                 $systemInformation->tax	= $request->tax;
                 $systemInformation->charge = $request->charge;
-                $systemInformation->usdollar = $request->usdollar;
+                
                 if ($request->hasfile('logo')) {
 
 
@@ -257,7 +257,7 @@ $panelSettingInfo = SystemInformation::where('branch_id',Auth::user()->branch_id
         $systemInformation->description	= $request->description;
         $systemInformation->develop_by = $request->develop_by;
         $systemInformation->tax	= $request->tax;
-        $systemInformation->usdollar = $request->usdollar;
+        
                 $systemInformation->charge = $request->charge;
         if ($request->hasfile('logo')) {
 
@@ -293,7 +293,7 @@ $panelSettingInfo = SystemInformation::where('branch_id',Auth::user()->branch_id
 
 } catch (\Exception $e) {
     DB::rollBack();
-    return redirect()->route('error_500');
+    return $e->getMessage();
 }
 
 
