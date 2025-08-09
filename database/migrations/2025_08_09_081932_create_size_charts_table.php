@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('distance_segments', function (Blueprint $table) {
+        Schema::create('size_charts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('ticket_id')->constrained('tickets')->onDelete('cascade');
-            $table->string('from_location'); // To maintain order (e.g., 1 for A-B, 2 for B-C)
-            $table->string('waypoint'); 
+            $table->string('name')->unique();
+            $table->boolean('status')->default(1);
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('distance_segments');
+        Schema::dropIfExists('size_charts');
     }
 };

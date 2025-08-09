@@ -1,0 +1,311 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Product;
+use App\Models\Brand;
+use App\Models\Category;
+use App\Models\Subcategory;
+use App\Models\SubSubcategory;
+use App\Models\Fabric;
+use App\Models\Unit;
+use App\Models\Color;
+use App\Models\Size;
+use App\Models\SizeChart;
+use App\Models\AssignChart;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Intervention\Image\Laravel\Facades\Image;
+use Illuminate\Support\Facades\File;
+
+class ProductController extends Controller
+{
+    private function getProductData()
+    {
+        return [
+            'brands' => Brand::where('status', 1)->get(),
+            'categories' => Category::where('status', 1)->get(),
+            'fabrics' => Fabric::where('status', 1)->get(),
+            'units' => Unit::where('status', 1)->get(),
+            'colors' => Color::where('status', 1)->get(),
+            'sizes' => Size::where('status', 1)->get(),
+            'size_charts' => SizeChart::where('status', 1)->get(),
+        ];
+    }
+
+    // AJAX method to get subcategories
+    public function getSubcategories($categoryId)
+    {
+        return response()->json(Subcategory::where('category_id', $categoryId)->where('status', 1)->get());
+    }
+
+    // AJAX method to get sub-subcategories
+    public function getSubSubcategories($subcategoryId)
+    {
+        return response()->json(SubSubcategory::where('subcategory_id', $subcategoryId)->where('status', 1)->get());
+    }
+
+    // AJAX method to get size chart entries
+    public function getSizeChartEntries($id)
+    {
+        return response()->json(SizeChart::with('entries')->findOrFail($id));
+    }
+
+
+    public function index()
+    {
+        return view('admin.product.index');
+    }
+
+    public function data(Request $request)
+    {
+        $query = Product::with('category', 'brand');
+
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%')
+                  ->orWhereHas('category', fn($q) => $q->where('name', 'like', '%' . $request->search . '%'))
+                  ->orWhereHas('brand', fn($q) => $q->where('name', 'like', '%' . $request->search . '%'));
+        }
+
+        $sort = $request->get('sort', 'id');
+        $direction = $request->get('direction', 'desc');
+        $query->orderBy($sort, $direction);
+
+        $products = $query->paginate(10);
+
+        return response()->json([
+            'data' => $products->items(),
+            'total' => $products->total(),
+            'current_page' => $products->currentPage(),
+            'last_page' => $products->lastPage(),
+        ]);
+    }
+
+
+    public function create()
+    {
+        return view('admin.product.create', $this->getProductData());
+    }
+
+    public function store(Request $request)
+    {
+
+        dd($request->all());
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'unit_id' => 'required|exists:units,id',
+            'base_price' => 'required|numeric|min:0',
+            'purchase_price' => 'required|numeric|min:0',
+            'thumbnail_image.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'size_chart_id' => 'nullable|exists:size_charts,id',
+            'chart_entries' => 'nullable|array',
+        ]);
+
+        DB::transaction(function () use ($request) {
+            $thumbnailPaths = [];
+            if ($request->hasFile('thumbnail_image')) {
+                foreach ($request->file('thumbnail_image') as $image) {
+                    $thumbnailPaths[] = $this->uploadImage($image, 'products/thumbnails');
+                }
+            }
+
+            $product = Product::create([
+                'name' => $request->name,
+                'slug' => Str::slug($request->name),
+                'product_code' => $request->product_code,
+                'brand_id' => $request->brand_id,
+                'category_id' => $request->category_id,
+                'subcategory_id' => $request->subcategory_id,
+                'sub_subcategory_id' => $request->sub_subcategory_id,
+                'fabric_id' => $request->fabric_id,
+                'unit_id' => $request->unit_id,
+                'description' => $request->description,
+                'base_price' => $request->base_price,
+                'purchase_price' => $request->purchase_price,
+                'discount_price' => $request->discount_price,
+                'thumbnail_image' => $thumbnailPaths,
+                'status' => $request->status ?? 1,
+            ]);
+
+            // Handle Assign Chart
+            if ($request->filled('size_chart_id') && $request->has('chart_entries')) {
+                $assignChart = $product->assignChart()->create([
+                    'size_chart_id' => $request->size_chart_id,
+                ]);
+                foreach ($request->chart_entries as $entry) {
+                    $assignChart->entries()->create($entry);
+                }
+            }
+
+            if ($request->has('variants')) {
+                foreach ($request->variants as $variantData) {
+                    $variantImagePath = null;
+                    if (isset($variantData['image'])) {
+                        $variantImagePath = $this->uploadImage($variantData['image'], 'products/variants');
+                    }
+
+                    // Filter out sizes that don't have a quantity
+                    $sizes = array_filter($variantData['sizes'], fn($size) => !is_null($size['quantity']) && $size['quantity'] > 0);
+
+                    if (!empty($sizes)) {
+                        $product->variants()->create([
+                            'color_id' => $variantData['color_id'],
+                            'variant_image' => $variantImagePath,
+                            'sizes' => $sizes,
+                            'additional_price' => $variantData['additional_price'] ?? 0,
+                        ]);
+                    }
+                }
+            }
+        });
+
+        return redirect()->route('product.index')->with('success', 'Product created successfully.');
+    }
+
+      public function show(Product $product)
+    {
+        // Eager load all necessary relationships for the view
+        $product->load([
+            'brand',
+            'category',
+            'subcategory',
+            'subSubcategory',
+            'fabric',
+            'unit',
+            'variants.color',
+            'assignChart.entries',
+            'assignChart.originalSizeChart' // Load the original chart for its name
+        ]);
+        return view('admin.product.show', compact('product'));
+    }
+
+    public function edit(Product $product)
+    {
+        $data = $this->getProductData();
+        $data['product'] = $product->load('variants.color', 'assignChart.entries');
+        return view('admin.product.edit', $data);
+    }
+
+    public function update(Request $request, Product $product)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'product_code' => 'nullable|string|unique:products,product_code,' . $product->id,
+            'category_id' => 'required|exists:categories,id',
+            'unit_id' => 'required|exists:units,id',
+            'base_price' => 'required|numeric|min:0',
+            'purchase_price' => 'required|numeric|min:0',
+            'discount_price' => 'nullable|numeric|lt:base_price',
+            'thumbnail_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'variants' => 'nullable|array',
+        ]);
+
+        DB::transaction(function () use ($request, $product) {
+            $thumbnailPath = $product->thumbnail_image;
+            if ($request->hasFile('thumbnail_image')) {
+                $this->deleteImage($product->thumbnail_image);
+                $thumbnailPath = $this->uploadImage($request->file('thumbnail_image'), 'products/thumbnails');
+            }
+
+            $product->update([
+                'name' => $request->name,
+                'slug' => Str::slug($request->name),
+                'product_code' => $request->product_code,
+                'brand_id' => $request->brand_id,
+                'category_id' => $request->category_id,
+                'subcategory_id' => $request->subcategory_id,
+                'sub_subcategory_id' => $request->sub_subcategory_id,
+                'fabric_id' => $request->fabric_id,
+                'unit_id' => $request->unit_id,
+                'description' => $request->description,
+                'base_price' => $request->base_price,
+                'purchase_price' => $request->purchase_price,
+                'discount_price' => $request->discount_price,
+                'thumbnail_image' => $thumbnailPath,
+                'status' => $request->status ?? 1,
+            ]);
+
+             // Handle Assign Chart update (delete old, create new)
+            if ($product->assignChart) {
+                $product->assignChart->entries()->delete();
+                $product->assignChart()->delete();
+            }
+            if ($request->filled('size_chart_id') && $request->has('chart_entries')) {
+                $assignChart = $product->assignChart()->create([
+                    'size_chart_id' => $request->size_chart_id,
+                ]);
+                foreach ($request->chart_entries as $entry) {
+                    $assignChart->entries()->create($entry);
+                }
+            }
+
+            // Delete old variants and their images before creating new ones
+            foreach ($product->variants as $variant) {
+                $this->deleteImage($variant->variant_image);
+            }
+            $product->variants()->delete();
+
+            if ($request->has('variants')) {
+                foreach ($request->variants as $variantData) {
+                    $variantImagePath = null;
+                    if (isset($variantData['image'])) {
+                        // This assumes you are using a file input with the name 'variants[index][image]'
+                        $variantImagePath = $this->uploadImage($variantData['image'], 'products/variants');
+                    } elseif (isset($variantData['existing_image'])) {
+                        // This handles cases where the image is not being changed
+                        $variantImagePath = $variantData['existing_image'];
+                    }
+
+                    $sizes = array_filter($variantData['sizes'], fn($size) => !is_null($size['quantity']) && $size['quantity'] > 0);
+
+                    if (!empty($sizes)) {
+                        $product->variants()->create([
+                            'color_id' => $variantData['color_id'],
+                            'variant_image' => $variantImagePath,
+                            'sizes' => $sizes,
+                            'additional_price' => $variantData['additional_price'] ?? 0,
+                        ]);
+                    }
+                }
+            }
+        });
+
+        return redirect()->route('product.index')->with('success', 'Product updated successfully.');
+    }
+
+    public function destroy(Product $product)
+    {
+        DB::transaction(function () use ($product) {
+            foreach ($product->variants as $variant) {
+                $this->deleteImage($variant->variant_image);
+            }
+            $this->deleteImage($product->thumbnail_image);
+            $product->delete();
+        });
+
+        return response()->json(['message' => 'Product deleted successfully.']);
+    }
+
+    private function uploadImage($image, $directory)
+    {
+        $imageName = Str::uuid() . '.' . $image->getClientOriginalExtension();
+        $destinationPath = public_path('storage/' . $directory);
+        if (!File::isDirectory($destinationPath)) {
+            File::makeDirectory($destinationPath, 0777, true, true);
+        }
+        Image::read($image->getRealPath())->resize(800, 800, function ($c) {
+            $c->aspectRatio(); $c->upsize();
+        })->save($destinationPath . '/' . $imageName);
+        return $directory . '/' . $imageName;
+    }
+
+    private function deleteImage($path)
+    {
+        if ($path && File::exists(public_path('storage/' . $path))) {
+            File::delete(public_path('storage/' . $path));
+        }
+    }
+}

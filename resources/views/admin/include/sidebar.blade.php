@@ -28,18 +28,85 @@
                         <li><a class="nav-link" href="#">Shipped</a></li>
                     </ul>
                 </li>
+                  @if ($usr->can('animationCategoryAdd') || $usr->can('animationCategoryView') ||  $usr->can('animationCategoryDelete') ||  $usr->can('animationCategoryUpdate') || $usr->can('brandAdd') || $usr->can('brandView') ||  $usr->can('brandDelete') ||  $usr->can('brandUpdate') || $usr->can('categoryAdd') || $usr->can('categoryView') ||  $usr->can('categoryDelete') ||  $usr->can('categoryUpdate') || $usr->can('productAdd') || $usr->can('productView') ||  $usr->can('productDelete') ||  $usr->can('productUpdate'))
                 <li class="nav-item">
                     <a class="nav-link" href="#productsSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="productsSubmenu">
                         <i data-feather="tag"></i>
                         <span>Products</span>
                         <i data-feather="chevron-down" class="ms-auto"></i>
                     </a>
-                    <ul class="collapse list-unstyled" id="productsSubmenu" data-bs-parent="#sidebar-menu">
-                        <li><a class="nav-link" href="#">All Products</a></li>
-                        <li><a class="nav-link" href="#">Add New</a></li>
-                        <li><a class="nav-link" href="#">Categories</a></li>
+                    <ul class="collapse list-unstyled {{Route::is('product.index') || Route::is('size-chart.index') || Route::is('unit.index') || Route::is('size.index') || Route::is('color.index') ||  Route::is('fabric.index') || Route::is('sub-subcategory.index') ||  Route::is('subcategory.index') || Route::is('animationCategory.index') || Route::is('animationCategory.edit') || Route::is('animationCategory.create') || Route::is('brand.show') || Route::is('brand.index') || Route::is('brand.edit') || Route::is('brand.create') || Route::is('category.index') || Route::is('category.edit') || Route::is('category.create') || Route::is('product.index') || Route::is('product.edit')|| Route::is('product.show') || Route::is('product.create') ? 'show' : '' }}" id="productsSubmenu" data-bs-parent="#sidebar-menu">
+                           @if ($usr->can('productView') ||  $usr->can('productDelete') ||  $usr->can('productUpdate'))
+                        <li><a class="nav-link {{ Route::is('product.index') || Route::is('product.edit') || Route::is('product.show') ? 'active' : '' }}" href="{{route('product.index')}}">All Products</a></li>
+                        @endif
+                      @if ($usr->can('productAdd'))
+                        <li><a class="nav-link {{Route::is('product.create') ? 'active' : ''}}" href="{{route('product.create')}}">Add Product</a></li>
+                        @endif
+                         @if ($usr->can('brandAdd') || $usr->can('brandView') ||  $usr->can('brandDelete') ||  $usr->can('brandUpdate'))
+
+                        <a class="nav-link {{ Route::is('brand.index') || Route::is('brand.edit') || Route::is('brand.create') ? 'active' : '' }}" href="{{ route('brand.index') }}">Brand</a>
+
+                    @endif
+
+
+                          @if ($usr->can('categoryAdd') || $usr->can('categoryView') ||  $usr->can('categoryDelete') ||  $usr->can('categoryUpdate'))
+
+                        <a class="nav-link {{ Route::is('category.index') || Route::is('category.edit') || Route::is('category.create') ? 'active' : '' }}" href="{{ route('category.index') }}">Category</a>
+
+                    @endif
+
+                     @if ($usr->can('subcategoryAdd') || $usr->can('subcategoryView') ||  $usr->can('subcategoryDelete') ||  $usr->can('subcategoryUpdate'))
+
+                        <a class="nav-link {{ Route::is('subcategory.index') || Route::is('subcategory.edit') || Route::is('subcategory.create') ? 'active' : '' }}" href="{{ route('subcategory.index') }}">Sub Category</a>
+
+                    @endif
+
+                                    @if ($usr->can('sub-subcategoryAdd') || $usr->can('sub-subcategoryView') ||  $usr->can('sub-subcategoryDelete') ||  $usr->can('sub-subcategoryUpdate'))
+
+                        <a class="nav-link {{ Route::is('sub-subcategory.index') || Route::is('sub-subcategory.edit') || Route::is('sub-subcategory.create') ? 'active' : '' }}" href="{{ route('sub-subcategory.index') }}">Sub-subcategory</a>
+
+                    @endif
+
+                    @if ($usr->can('animationCategoryAdd') || $usr->can('animationCategoryView') ||  $usr->can('animationCategoryDelete') ||  $usr->can('animationCategoryUpdate'))
+
+                        <a class="nav-link {{ Route::is('animationCategory.index') || Route::is('animationCategory.edit') || Route::is('animationCategory.create') ? 'active' : '' }}" href="{{ route('animationCategory.index') }}">Animation Category</a>
+
+                    @endif
+
+                                  @if ($usr->can('fabricAdd') || $usr->can('fabricView') ||  $usr->can('fabricDelete') ||  $usr->can('fabricUpdate'))
+
+                        <a class="nav-link {{ Route::is('fabric.index') || Route::is('fabric.edit') || Route::is('fabric.create') ? 'active' : '' }}" href="{{ route('fabric.index') }}">Material</a>
+
+                    @endif
+
+                     @if ($usr->can('colorAdd') || $usr->can('colorView') ||  $usr->can('colorDelete') ||  $usr->can('colorUpdate'))
+
+                        <a class="nav-link {{ Route::is('color.index') || Route::is('color.edit') || Route::is('color.create') ? 'active' : '' }}" href="{{ route('color.index') }}">Color</a>
+
+                    @endif
+
+
+                      @if ($usr->can('unitAdd') || $usr->can('unitView') ||  $usr->can('unitDelete') ||  $usr->can('unitUpdate'))
+
+                        <a class="nav-link {{ Route::is('unit.index') || Route::is('unit.edit') || Route::is('unit.create') ? 'active' : '' }}" href="{{ route('unit.index') }}">Unit</a>
+
+                    @endif
+
+                     @if ($usr->can('sizeAdd') || $usr->can('sizeView') ||  $usr->can('sizeDelete') ||  $usr->can('sizeUpdate'))
+
+                        <a class="nav-link {{ Route::is('size.index') || Route::is('size.edit') || Route::is('size.create') ? 'active' : '' }}" href="{{ route('size.index') }}">Size</a>
+
+                    @endif
+
+                    @if ($usr->can('sizeChartAdd') || $usr->can('sizeChartView') ||  $usr->can('sizeChartDelete') ||  $usr->can('sizeChartUpdate'))
+
+                        <a class="nav-link {{ Route::is('size-chart.index') || Route::is('size-chart.edit') || Route::is('size-chart.create') ? 'active' : '' }}" href="{{ route('size-chart.index') }}">Size Chart</a>
+
+                    @endif
+
                     </ul>
                 </li>
+                @endif
                 <li class="nav-item">
                     <a class="nav-link" href="#">
                         <i data-feather="users"></i>

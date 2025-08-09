@@ -32,6 +32,20 @@ use App\Http\Controllers\Admin\SearchLogController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\HolidayCalenderController;
 
+use App\Http\Controllers\Admin\BrandController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\SubCategoryController;
+use App\Http\Controllers\Admin\ColorController;
+use App\Http\Controllers\Admin\UnitController;
+use App\Http\Controllers\Admin\AnimationCategoryController;
+
+use App\Http\Controllers\Admin\SubSubcategoryController;
+use App\Http\Controllers\Admin\FabricController;
+
+use App\Http\Controllers\Admin\SizeChartController;
+use App\Http\Controllers\Admin\SizeController;
+use App\Http\Controllers\Admin\ProductController;
+
 // Route::get('/', function () {
 //     return view('welcome');
 // });
@@ -90,7 +104,59 @@ Route::controller(AuthController::class)->group(function () {
 
 
 Route::group(['middleware' => ['auth']], function() {
+Route::get('ajax_brands', [BrandController::class, 'data'])->name('ajax.brand.data');
+Route::resource('brand', BrandController::class);
 
+Route::get('ajax_category', [CategoryController::class, 'data'])->name('ajax.category.data');
+Route::resource('category', CategoryController::class);
+
+Route::get('ajax_subcategory', [SubCategoryController::class, 'data'])->name('ajax.subcategory.data');
+Route::resource('subcategory', SubCategoryController::class);
+
+
+Route::get('ajax_unit', [UnitController::class, 'data'])->name('ajax.unit.data');
+Route::resource('unit', UnitController::class);
+
+// Sub-Subcategory Routes
+    Route::get('get-subcategories/{categoryId}', [SubSubcategoryController::class, 'getSubcategories'])->name('get.subcategories');
+    Route::get('ajax_ub-subcategories', [SubSubcategoryController::class, 'data'])->name('ajax.sub-subcategory.data');
+    Route::resource('sub-subcategory', SubSubcategoryController::class);
+
+
+     // Fabric Routes
+    Route::get('ajax_fabrics', [FabricController::class, 'data'])->name('ajax.fabric.data');
+    Route::resource('fabric', FabricController::class);
+
+
+    // Color Routes
+    Route::get('ajax_colors', [ColorController::class, 'data'])->name('ajax.color.data');
+    Route::resource('color', ColorController::class);
+
+    // Unit Routes
+    Route::get('ajax_units', [UnitController::class, 'data'])->name('ajax.unit.data');
+    Route::resource('unit', UnitController::class);
+
+    // Size Routes
+    Route::get('ajax_sizes', [SizeController::class, 'data'])->name('ajax.size.data');
+    Route::resource('size', SizeController::class);
+
+
+    // Size Chart Routes
+    Route::get('ajax_size-charts', [SizeChartController::class, 'data'])->name('ajax.size-chart.data');
+    Route::resource('size-chart', SizeChartController::class)->parameters([
+        'size-chart' => 'id'
+    ]);
+
+
+// Product Routes
+    Route::get('ajax_products', [ProductController::class, 'data'])->name('ajax.product.data');
+        Route::get('get_subcategories/{categoryId}', [ProductController::class, 'getSubcategories'])->name('get_subcategories');
+    Route::get('get-sub-subcategories/{subcategoryId}', [ProductController::class, 'getSubSubcategories'])->name('get.sub-subcategories');
+    Route::get('get-size-chart-entries/{id}', [ProductController::class, 'getSizeChartEntries'])->name('get.size-chart.entries');
+    Route::resource('product', ProductController::class);
+
+Route::get('ajax_animation_category', [AnimationCategoryController::class, 'data'])->name('ajax.animation_category.data');
+Route::resource('animationCategory', AnimationCategoryController::class);
 Route::resource('coupon', CouponController::class);
 
 Route::post('/coupons/apply', [CouponController::class, 'applyCoupon'])->name('coupons.apply');
