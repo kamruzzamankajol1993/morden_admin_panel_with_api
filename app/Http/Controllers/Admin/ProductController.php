@@ -12,6 +12,7 @@ use App\Models\Fabric;
 use App\Models\Unit;
 use App\Models\Color;
 use App\Models\Size;
+use App\Models\AnimationCategory; // Add this
 use App\Models\SizeChart;
 use App\Models\AssignChart;
 use Illuminate\Http\Request;
@@ -32,6 +33,7 @@ class ProductController extends Controller
             'colors' => Color::where('status', 1)->get(),
             'sizes' => Size::where('status', 1)->get(),
             'size_charts' => SizeChart::where('status', 1)->get(),
+            'animation_categories' => AnimationCategory::where('status', 1)->get(),
         ];
     }
 
@@ -56,17 +58,19 @@ class ProductController extends Controller
 
     public function index()
     {
-        return view('admin.product.index');
+        // Pass all sizes to the view, keyed by ID for easy lookup in the script
+        $sizes = Size::all()->keyBy('id');
+        return view('admin.product.index', compact('sizes'));
     }
 
     public function data(Request $request)
     {
-        $query = Product::with('category', 'brand');
+        // Eager load variants and their color relationship for the stock list
+        $query = Product::with(['category', 'variants.color']);
 
         if ($request->filled('search')) {
             $query->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhereHas('category', fn($q) => $q->where('name', 'like', '%' . $request->search . '%'))
-                  ->orWhereHas('brand', fn($q) => $q->where('name', 'like', '%' . $request->search . '%'));
+                  ->orWhereHas('category', fn($q) => $q->where('name', 'like', '%' . $request->search . '%'));
         }
 
         $sort = $request->get('sort', 'id');
@@ -92,7 +96,7 @@ class ProductController extends Controller
     public function store(Request $request)
     {
 
-        dd($request->all());
+        ///dd($request->all());
         $request->validate([
             'name' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
@@ -106,9 +110,14 @@ class ProductController extends Controller
 
         DB::transaction(function () use ($request) {
             $thumbnailPaths = [];
+            $mainPaths = [];
             if ($request->hasFile('thumbnail_image')) {
                 foreach ($request->file('thumbnail_image') as $image) {
-                    $thumbnailPaths[] = $this->uploadImage($image, 'products/thumbnails');
+                    $thumbnailPaths[] = $this->uploadImageMobile($image, 'products/thumbnails');
+                }
+
+                 foreach ($request->file('thumbnail_image') as $image) {
+                    $mainPaths[] = $this->uploadImage($image, 'products/thumbnails');
                 }
             }
 
@@ -127,8 +136,31 @@ class ProductController extends Controller
                 'purchase_price' => $request->purchase_price,
                 'discount_price' => $request->discount_price,
                 'thumbnail_image' => $thumbnailPaths,
+                'main_image' => $mainPaths,
                 'status' => $request->status ?? 1,
             ]);
+
+              // Handle Assigned Categories
+            if ($request->has('animation_category_ids')) {
+                foreach ($request->animation_category_ids as $id) {
+                    $category = AnimationCategory::find($id);
+                    if ($category) {
+                        $product->assigns()->create([
+                            'category_id' => $id,
+                            'category_name' => $category->name,
+                            'type' => 'animation'
+                        ]);
+                    }
+                }
+            }
+            if ($request->has('other_categories')) {
+                foreach ($request->other_categories as $name) {
+                    $product->assigns()->create([
+                        'category_name' => $name,
+                        'type' => 'other'
+                    ]);
+                }
+            }
 
             // Handle Assign Chart
             if ($request->filled('size_chart_id') && $request->has('chart_entries')) {
@@ -143,8 +175,10 @@ class ProductController extends Controller
             if ($request->has('variants')) {
                 foreach ($request->variants as $variantData) {
                     $variantImagePath = null;
+                    $variantImagePathmain = null;
                     if (isset($variantData['image'])) {
-                        $variantImagePath = $this->uploadImage($variantData['image'], 'products/variants');
+                        $variantImagePath = $this->uploadImageMobile($variantData['image'], 'products/variants');
+                        $variantImagePathmain = $this->uploadImage($variantData['image'], 'products/variants');
                     }
 
                     // Filter out sizes that don't have a quantity
@@ -153,7 +187,10 @@ class ProductController extends Controller
                     if (!empty($sizes)) {
                         $product->variants()->create([
                             'color_id' => $variantData['color_id'],
+                                                        'variant_sku' => $variantData['variant_sku'],
+
                             'variant_image' => $variantImagePath,
+                            'main_image' => $variantImagePathmain,
                             'sizes' => $sizes,
                             'additional_price' => $variantData['additional_price'] ?? 0,
                         ]);
@@ -203,11 +240,16 @@ class ProductController extends Controller
             'variants' => 'nullable|array',
         ]);
 
+        //dd($request->all());
+
         DB::transaction(function () use ($request, $product) {
             $thumbnailPath = $product->thumbnail_image;
+            $mainPath = $product->main_image;
             if ($request->hasFile('thumbnail_image')) {
                 $this->deleteImage($product->thumbnail_image);
-                $thumbnailPath = $this->uploadImage($request->file('thumbnail_image'), 'products/thumbnails');
+                $this->deleteImage($product->main_image);
+                $thumbnailPath = $this->uploadImageMobile($request->file('thumbnail_image'), 'products/thumbnails');
+                $mainPath = $this->uploadImage($request->file('thumbnail_image'), 'products/thumbnails');
             }
 
             $product->update([
@@ -225,8 +267,31 @@ class ProductController extends Controller
                 'purchase_price' => $request->purchase_price,
                 'discount_price' => $request->discount_price,
                 'thumbnail_image' => $thumbnailPath,
+                'main_image' => $mainPath,
                 'status' => $request->status ?? 1,
             ]);
+
+               $product->assigns()->delete();
+            if ($request->has('animation_category_ids')) {
+                foreach ($request->animation_category_ids as $id) {
+                    $category = AnimationCategory::find($id);
+                    if ($category) {
+                        $product->assigns()->create([
+                            'category_id' => $id,
+                            'category_name' => $category->name,
+                            'type' => 'animation'
+                        ]);
+                    }
+                }
+            }
+            if ($request->has('other_categories')) {
+                foreach ($request->other_categories as $name) {
+                    $product->assigns()->create([
+                        'category_name' => $name,
+                        'type' => 'other'
+                    ]);
+                }
+            }
 
              // Handle Assign Chart update (delete old, create new)
             if ($product->assignChart) {
@@ -243,20 +308,25 @@ class ProductController extends Controller
             }
 
             // Delete old variants and their images before creating new ones
-            foreach ($product->variants as $variant) {
-                $this->deleteImage($variant->variant_image);
-            }
+            
             $product->variants()->delete();
 
             if ($request->has('variants')) {
                 foreach ($request->variants as $variantData) {
                     $variantImagePath = null;
+                    $variantImagePathmain = null;
                     if (isset($variantData['image'])) {
+
+                        foreach ($product->variants as $variant) {
+                $this->deleteImage($variant->variant_image);
+            }
                         // This assumes you are using a file input with the name 'variants[index][image]'
-                        $variantImagePath = $this->uploadImage($variantData['image'], 'products/variants');
+                        $variantImagePath = $this->uploadImageMobile($variantData['image'], 'products/variants');
+                        $variantImagePathmain = $this->uploadImage($variantData['image'], 'products/variants');
                     } elseif (isset($variantData['existing_image'])) {
                         // This handles cases where the image is not being changed
                         $variantImagePath = $variantData['existing_image'];
+                        $variantImagePathmain = $variantData['existing_image'];
                     }
 
                     $sizes = array_filter($variantData['sizes'], fn($size) => !is_null($size['quantity']) && $size['quantity'] > 0);
@@ -264,7 +334,9 @@ class ProductController extends Controller
                     if (!empty($sizes)) {
                         $product->variants()->create([
                             'color_id' => $variantData['color_id'],
+                             'variant_sku' => $variantData['variant_sku'],
                             'variant_image' => $variantImagePath,
+                            'main_image' => $variantImagePathmain,
                             'sizes' => $sizes,
                             'additional_price' => $variantData['additional_price'] ?? 0,
                         ]);
@@ -283,6 +355,7 @@ class ProductController extends Controller
                 $this->deleteImage($variant->variant_image);
             }
             $this->deleteImage($product->thumbnail_image);
+            $this->deleteImage($product->main_image);
             $product->delete();
         });
 
@@ -292,7 +365,7 @@ class ProductController extends Controller
     private function uploadImage($image, $directory)
     {
         $imageName = Str::uuid() . '.' . $image->getClientOriginalExtension();
-        $destinationPath = public_path('storage/' . $directory);
+        $destinationPath = public_path('uploads/' . $directory);
         if (!File::isDirectory($destinationPath)) {
             File::makeDirectory($destinationPath, 0777, true, true);
         }
@@ -302,10 +375,23 @@ class ProductController extends Controller
         return $directory . '/' . $imageName;
     }
 
+    private function uploadImageMobile($image, $directory)
+    {
+        $imageName = Str::uuid() . '.' . $image->getClientOriginalExtension();
+        $destinationPath = public_path('uploads/' . $directory);
+        if (!File::isDirectory($destinationPath)) {
+            File::makeDirectory($destinationPath, 0777, true, true);
+        }
+        Image::read($image->getRealPath())->resize(400, 400, function ($c) {
+            $c->aspectRatio(); $c->upsize();
+        })->save($destinationPath . '/' . $imageName);
+        return $directory . '/' . $imageName;
+    }
+
     private function deleteImage($path)
     {
-        if ($path && File::exists(public_path('storage/' . $path))) {
-            File::delete(public_path('storage/' . $path));
+        if ($path && File::exists(public_path('uploads/' . $path))) {
+            File::delete(public_path('uploads/' . $path));
         }
     }
 }

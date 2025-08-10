@@ -24,9 +24,10 @@
                                 <th>Sl</th>
                                 <th>Image</th>
                                 <th class="sortable" data-column="name">Name</th>
-                                <th>Category</th>
-                                <th>Brand</th>
-                                <th class="sortable" data-column="base_price">Price</th>
+                                <th>Price</th>
+                               
+                                <th>Total Stock</th>
+                                <th class="sortable" data-column="created_at">Created At</th>
                                 <th class="sortable" data-column="status">Status</th>
                                 <th>Action</th>
                             </tr>
@@ -46,14 +47,33 @@
         </div>
     </div>
 </main>
+<!-- Stock Details Modal -->
+<div class="modal fade" id="stockModal" tabindex="-1" aria-labelledby="stockModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="stockModalLabel">Stock Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="stockModalBodyContent">
+          <!-- Stock details will be loaded here -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 @endsection
 @section('script')
 <script>
 $(document).ready(function() {
+    // Store all sizes passed from the controller for easy lookup
+    const allSizes = @json($sizes);
+
     var currentPage = 1, searchTerm = '', sortColumn = 'id', sortDirection = 'desc';
 
     var routes = {
-        fetch: "{{ route('ajax.product.data') }}", // Make sure this route is defined
+        fetch: "{{ route('ajax.product.data') }}",
         destroy: id => `{{ route('product.destroy', ':id') }}`.replace(':id', id),
         csrf: "{{ csrf_token() }}"
     };
@@ -68,17 +88,52 @@ $(document).ready(function() {
             } else {
                 res.data.forEach((product, i) => {
                     const statusBadge = product.status == 1 ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Inactive</span>';
-                    const imageUrl = product.thumbnail_image ? `{{ asset('storage') }}/${product.thumbnail_image}` : 'https://placehold.co/50x50';
-                    const editUrl = `{{ url('admin/product') }}/${product.id}/edit`;
-                    const showUrl = `{{ url('admin/product') }}/${product.id}`;
+                    const firstImage = Array.isArray(product.thumbnail_image) && product.thumbnail_image.length > 0 ? product.thumbnail_image[0] : null;
+                    const imageUrl = firstImage ? `{{ asset('public/uploads') }}/${firstImage}` : 'https://placehold.co/50x50';
+                    const editUrl = `{{ url('product') }}/${product.id}/edit`;
+                    const showUrl = `{{ url('product') }}/${product.id}`;
+
+                    // --- PRICE LOGIC ---
+                    let priceHtml = `<b>${product.base_price}</b>`;
+                    if (product.discount_price) {
+                        priceHtml = `<del>${product.base_price}</del><br><b>${product.discount_price}</b>`;
+                    }
+
+                    // --- STOCK LOGIC ---
+                    let totalStock = 0;
+                    if (product.variants && product.variants.length > 0) {
+                        product.variants.forEach(variant => {
+                            if (variant.sizes && Array.isArray(variant.sizes)) {
+                                variant.sizes.forEach(sizeInfo => {
+                                    totalStock += parseInt(sizeInfo.quantity, 10) || 0;
+                                });
+                            }
+                        });
+                    }
+                    
+                    // Escape single quotes in product name for the data attribute
+                    const safeProductName = product.name.replace(/'/g, "&apos;");
+                    const variantsJson = JSON.stringify(product.variants);
+                    const stockButton = `<button type="button" class="btn btn-sm btn-outline-secondary btn-stock-modal"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#stockModal"
+                                            data-product-name='${safeProductName}'
+                                            data-variants='${variantsJson}'>
+                                            <b>${totalStock}</b>
+                                         </button>`;
+
+                    // --- DATE FORMATTING ---
+                    const createdAt = new Date(product.created_at).toLocaleDateString('en-US', {
+                        day: '2-digit', month: 'short', year: 'numeric'
+                    });
 
                     rows += `<tr>
                         <td>${(res.current_page - 1) * 10 + i + 1}</td>
                         <td><img src="${imageUrl}" alt="${product.name}" width="50" class="img-thumbnail"></td>
                         <td>${product.name}</td>
-                        <td>${product.category ? product.category.name : 'N/A'}</td>
-                        <td>${product.brand ? product.brand.name : 'N/A'}</td>
-                        <td>${product.base_price}</td>
+                        <td>${priceHtml}</td>
+                        <td>${stockButton}</td>
+                        <td>${createdAt}</td>
                         <td>${statusBadge}</td>
                         <td>
                             <a href="${showUrl}" class="btn btn-sm btn-primary"><i class="fa fa-eye"></i></a>
@@ -106,6 +161,47 @@ $(document).ready(function() {
             $('#pagination').html(paginationHtml);
         });
     }
+
+    // --- Modal Population Logic ---
+    $(document).on('click', '.btn-stock-modal', function() {
+        const productName = $(this).data('product-name');
+        const variants = $(this).data('variants');
+        const modalTitle = $('#stockModalLabel');
+        const modalBody = $('#stockModalBodyContent');
+
+        modalTitle.text(`Stock Details for: ${productName}`);
+        modalBody.empty();
+
+        if (variants && variants.length > 0) {
+            let contentHtml = '<table class="table table-sm table-bordered"><thead><tr><th>Color</th><th>Size</th><th>Quantity</th></tr></thead><tbody>';
+            let hasStock = false;
+            variants.forEach(variant => {
+                if (variant.sizes && Array.isArray(variant.sizes)) {
+                    const availableSizes = variant.sizes.filter(s => s.quantity > 0);
+                    if (availableSizes.length > 0) {
+                        hasStock = true;
+                        availableSizes.forEach(sizeInfo => {
+                            const sizeName = allSizes[sizeInfo.size_id] ? allSizes[sizeInfo.size_id].name : 'Unknown';
+                            contentHtml += `<tr>
+                                <td>${variant.color ? variant.color.name : 'N/A'}</td>
+                                <td>${sizeName}</td>
+                                <td><b>${sizeInfo.quantity}</b></td>
+                            </tr>`;
+                        });
+                    }
+                }
+            });
+            contentHtml += '</tbody></table>';
+
+            if (!hasStock) {
+                modalBody.html('<p class="text-muted">No stock variations available for this product.</p>');
+            } else {
+                modalBody.html(contentHtml);
+            }
+        } else {
+            modalBody.html('<p class="text-muted">No stock variations available for this product.</p>');
+        }
+    });
 
     $('#searchInput').on('keyup', function () { searchTerm = $(this).val(); currentPage = 1; fetchData(); });
     $(document).on('click', '.sortable', function () {

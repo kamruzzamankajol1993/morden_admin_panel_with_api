@@ -97,6 +97,16 @@ class Product extends Model
         return $this->belongsTo(Unit::class);
     }
 
+     public function assignChart()
+    {
+        return $this->hasOne(AssignChart::class);
+    }
+
+     public function assigns()
+    {
+        return $this->hasMany(AssignCategory::class);
+    }
+
 
     /**
      * Boot the model.
