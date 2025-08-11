@@ -21,6 +21,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Intervention\Image\Laravel\Facades\Image;
 use Illuminate\Support\Facades\File;
+use App\Models\ProductVariant;
+use App\Models\AssignCategory;
 
 class ProductController extends Controller
 {
@@ -242,6 +244,7 @@ class ProductController extends Controller
             'discount_price' => 'nullable|numeric|lt:base_price',
             'thumbnail_image.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'variants' => 'nullable|array',
+            'delete_images' => 'nullable|array',
         ]);
 
         //dd($request->all());
@@ -250,27 +253,56 @@ class ProductController extends Controller
 
          
 
-            if ($request->hasFile('thumbnail_image')) {
+           // --- REVISED IMAGE HANDLING LOGIC ---
 
-                $this->deleteImage($product->thumbnail_image);
-                $this->deleteImage($product->main_image);
+            // Start with the images that are already saved in the database.
+            $existingThumbnails = $product->thumbnail_image ?? [];
+            $existingMains = $product->main_image ?? [];
 
-                
-                foreach ($request->file('thumbnail_image') as $image) {
-                    $thumbnailPaths[] = $this->uploadImageMobile($image, 'products/thumbnails');
+            // 1. Handle deletion of existing images
+            if ($request->has('delete_images')) {
+                $imagesToDelete = $request->input('delete_images');
+                $indicesToDelete = [];
+
+                // Find the index of each image marked for deletion
+                foreach ($imagesToDelete as $pathToDelete) {
+                    $index = array_search($pathToDelete, $existingThumbnails);
+                    if ($index !== false) {
+                        $indicesToDelete[] = $index;
+                    }
                 }
 
-                 foreach ($request->file('thumbnail_image') as $image) {
-                    $mainPaths[] = $this->uploadImage($image, 'products/thumbnails');
+                // Delete the files from the server
+                if (!empty($indicesToDelete)) {
+                    foreach ($indicesToDelete as $index) {
+                        // Delete both the thumbnail and the corresponding main image file
+                        if (isset($existingThumbnails[$index])) {
+                            $this->deleteImage($existingThumbnails[$index]);
+                        }
+                        if (isset($existingMains[$index])) {
+                            $this->deleteImage($existingMains[$index]);
+                        }
+                        // Unset the entry from the arrays
+                        unset($existingThumbnails[$index]);
+                        unset($existingMains[$index]);
+                    }
                 }
-            
-            }else{
-
-                $thumbnailPaths = $product->thumbnail_image;
-            $mainPaths = $product->main_image;
-
-
             }
+
+            // Re-index the arrays to prevent issues after unsetting elements
+            $finalThumbnails = array_values($existingThumbnails);
+            $finalMains = array_values($existingMains);
+
+            // 2. Handle the upload of new images
+            if ($request->hasFile('thumbnail_image')) {
+                foreach ($request->file('thumbnail_image') as $image) {
+                    // Upload and add the new paths to our final arrays
+                    $finalThumbnails[] = $this->uploadImageMobile($image, 'products/thumbnails');
+                    $finalMains[] = $this->uploadImage($image, 'products/thumbnails');
+                }
+            }
+            
+            // --- END OF REVISED IMAGE HANDLING LOGIC ---
 
             $product->update([
                 'name' => $request->name,
@@ -286,8 +318,8 @@ class ProductController extends Controller
                 'base_price' => $request->base_price,
                 'purchase_price' => $request->purchase_price,
                 'discount_price' => $request->discount_price,
-                'thumbnail_image' => $thumbnailPaths,
-                'main_image' => $mainPaths,
+                'thumbnail_image' => $finalThumbnails, // Save the updated array of thumbnails
+                'main_image' => $finalMains, 
                 'status' => $request->status ?? 1,
             ]);
 
@@ -409,10 +441,18 @@ class ProductController extends Controller
         return $directory . '/' . $imageName;
     }
 
-    private function deleteImage($path)
+    private function deleteImage($paths)
     {
-        if ($path && File::exists(public_path('uploads/' . $path))) {
-            File::delete(public_path('uploads/' . $path));
+        if (is_array($paths)) {
+            foreach ($paths as $path) {
+                if ($path && File::exists(public_path('uploads/' . $path))) {
+                    File::delete(public_path('uploads/' . $path));
+                }
+            }
+        } elseif (is_string($paths)) {
+            if ($paths && File::exists(public_path('uploads/' . $paths))) {
+                File::delete(public_path('uploads/' . $paths));
+            }
         }
     }
 }

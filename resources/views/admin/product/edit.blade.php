@@ -476,76 +476,106 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // --- Multiple Thumbnail Image Preview Logic ---
-    const thumbnailInput = document.getElementById('thumbnailInput');
-    const previewContainer = document.getElementById('thumbnail-preview-container');
-    const dataTransfer = new DataTransfer();
+    // --- Corrected Multiple Thumbnail Image Preview Logic ---
+const thumbnailInput = document.getElementById('thumbnailInput');
+const previewContainer = document.getElementById('thumbnail-preview-container');
+// Use a DataTransfer object to manage the file list
+const dataTransfer = new DataTransfer();
 
-    function renderPreviews() {
-        previewContainer.innerHTML = '';
-        const files = Array.from(thumbnailInput.files);
+function renderPreviews() {
+    // 1. IMPORTANT: Instead of clearing the whole container,
+    //    we only remove the wrappers for the *new* images we added previously.
+    const newImageWrappers = previewContainer.querySelectorAll('.new-thumbnail-wrapper');
+    newImageWrappers.forEach(wrapper => wrapper.remove());
 
-        files.forEach((file, index) => {
-            if (!file.type.startsWith('image/')) { return; }
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const wrapper = document.createElement('div');
-                wrapper.classList.add('thumbnail-wrapper');
-                wrapper.style.position = 'relative';
-                
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.classList.add('img-thumbnail');
-                img.style.height = '80px';
-                img.style.width = '80px';
-                img.style.objectFit = 'cover';
+    // 2. Get the latest file list from our DataTransfer object
+    const files = Array.from(dataTransfer.files);
 
-                const removeBtn = document.createElement('button');
-                removeBtn.type = 'button';
-                removeBtn.innerHTML = '&times;';
-                removeBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'remove-preview-btn');
-                removeBtn.dataset.index = index;
-                removeBtn.style.position = 'absolute';
-                removeBtn.style.top = '0';
-                removeBtn.style.right = '0';
-                removeBtn.style.padding = '0px 5px';
-                removeBtn.style.lineHeight = '1';
+    // 3. Loop through the files and create the new previews
+    files.forEach((file, index) => {
+        if (!file.type.startsWith('image/')) { return; }
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const wrapper = document.createElement('div');
+            // Add a specific class to identify these as NEW previews
+            wrapper.classList.add('new-thumbnail-wrapper');
+            wrapper.style.position = 'relative';
 
-                wrapper.appendChild(img);
-                wrapper.appendChild(removeBtn);
-                previewContainer.appendChild(wrapper);
-            };
-            reader.readAsDataURL(file);
-        });
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.classList.add('img-thumbnail');
+            img.style.height = '80px';
+            img.style.width = '80px';
+            img.style.objectFit = 'cover';
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.innerHTML = '&times;';
+            removeBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'remove-preview-btn');
+            removeBtn.dataset.index = index; // Use index for removal
+            removeBtn.style.position = 'absolute';
+            removeBtn.style.top = '0';
+            removeBtn.style.right = '0';
+            removeBtn.style.padding = '0px 5px';
+            removeBtn.style.lineHeight = '1';
+
+            wrapper.appendChild(img);
+            wrapper.appendChild(removeBtn);
+            // Append the new wrapper to the end of the container
+            previewContainer.appendChild(wrapper);
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // Finally, update the actual file input's file list
+    thumbnailInput.files = dataTransfer.files;
+}
+
+thumbnailInput.addEventListener('change', function() {
+    // Add the newly selected files to our DataTransfer object
+    for (const file of this.files) {
+        dataTransfer.items.add(file);
     }
+    // Re-render the previews
+    renderPreviews();
+});
 
-    thumbnailInput.addEventListener('change', function() {
-        for (const file of this.files) {
+previewContainer.addEventListener('click', function(e) {
+    // Handle removing a NEW image preview
+    if (e.target && e.target.classList.contains('remove-preview-btn')) {
+        const indexToRemove = parseInt(e.target.dataset.index, 10);
+        
+        // Create a new DataTransfer object without the removed file
+        const newFiles = new DataTransfer();
+        const currentFiles = Array.from(dataTransfer.files);
+        currentFiles.forEach((file, index) => {
+            if (index !== indexToRemove) {
+                newFiles.items.add(file);
+            }
+        });
+        
+        // Replace the old DataTransfer object with the new one
+        dataTransfer.items.clear();
+        for (const file of newFiles.files) {
             dataTransfer.items.add(file);
         }
-        this.files = dataTransfer.files;
+
+        // Re-render the previews with the updated file list
         renderPreviews();
-    });
+    }
 
-    previewContainer.addEventListener('click', function(e) {
-        if (e.target && e.target.classList.contains('remove-preview-btn')) {
-            const indexToRemove = parseInt(e.target.dataset.index, 10);
-            const newFiles = new DataTransfer();
-            const currentFiles = Array.from(thumbnailInput.files);
-            
-            currentFiles.forEach((file, index) => {
-                if (index !== indexToRemove) {
-                    newFiles.items.add(file);
+    // This part handles the existing images from the server and is unchanged
+    if (e.target && e.target.classList.contains('delete-image-btn')) {
+         const wrapper = e.target.closest('.existing-image-wrapper');
+            if (wrapper) {
+                wrapper.style.display = 'none';
+                const hiddenInput = wrapper.querySelector('input[name="delete_images[]"]');
+                if (hiddenInput) {
+                    hiddenInput.disabled = false;
                 }
-            });
-
-            dataTransfer.items.clear();
-            Array.from(newFiles.files).forEach(file => dataTransfer.items.add(file));
-            thumbnailInput.files = newFiles.files;
-
-            renderPreviews();
-        }
-    });
+            }
+    }
+});
 });
 </script>
  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
