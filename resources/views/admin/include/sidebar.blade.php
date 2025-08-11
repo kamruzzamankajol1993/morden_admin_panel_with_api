@@ -35,9 +35,9 @@
                         <span>Products</span>
                         <i data-feather="chevron-down" class="ms-auto"></i>
                     </a>
-                    <ul class="collapse list-unstyled {{Route::is('product.index') || Route::is('size-chart.index') || Route::is('unit.index') || Route::is('size.index') || Route::is('color.index') ||  Route::is('fabric.index') || Route::is('sub-subcategory.index') ||  Route::is('subcategory.index') || Route::is('animationCategory.index') || Route::is('animationCategory.edit') || Route::is('animationCategory.create') || Route::is('brand.show') || Route::is('brand.index') || Route::is('brand.edit') || Route::is('brand.create') || Route::is('category.index') || Route::is('category.edit') || Route::is('category.create') || Route::is('product.index') || Route::is('product.edit')|| Route::is('product.show') || Route::is('product.create') ? 'show' : '' }}" id="productsSubmenu" data-bs-parent="#sidebar-menu">
+                    <ul class="collapse list-unstyled {{Route::is('barcode.index')|| Route::is('product.index') || Route::is('size-chart.index') || Route::is('unit.index') || Route::is('size.index') || Route::is('color.index') ||  Route::is('fabric.index') || Route::is('sub-subcategory.index') ||  Route::is('subcategory.index') || Route::is('animationCategory.index') || Route::is('animationCategory.edit') || Route::is('animationCategory.create') || Route::is('brand.show') || Route::is('brand.index') || Route::is('brand.edit') || Route::is('brand.create') || Route::is('category.index') || Route::is('category.edit') || Route::is('category.create') || Route::is('product.index') || Route::is('product.edit')|| Route::is('product.show') || Route::is('product.create') ? 'show' : '' }}" id="productsSubmenu" data-bs-parent="#sidebar-menu">
                            @if ($usr->can('productView') ||  $usr->can('productDelete') ||  $usr->can('productUpdate'))
-                        <li><a class="nav-link {{ Route::is('product.index') || Route::is('product.edit') || Route::is('product.show') ? 'active' : '' }}" href="{{route('product.index')}}">All Products</a></li>
+                        <li><a class="nav-link {{ Route::is('product.index') || Route::is('product.edit') || Route::is('product.show') ? 'active' : '' }}" href="{{route('product.index')}}">Product List</a></li>
                         @endif
                       @if ($usr->can('productAdd'))
                         <li><a class="nav-link {{Route::is('product.create') ? 'active' : ''}}" href="{{route('product.create')}}">Add Product</a></li>
@@ -101,6 +101,12 @@
                     @if ($usr->can('sizeChartAdd') || $usr->can('sizeChartView') ||  $usr->can('sizeChartDelete') ||  $usr->can('sizeChartUpdate'))
 
                         <a class="nav-link {{ Route::is('size-chart.index') || Route::is('size-chart.edit') || Route::is('size-chart.create') ? 'active' : '' }}" href="{{ route('size-chart.index') }}">Size Chart</a>
+
+                    @endif
+
+                      @if ($usr->can('barcodeView'))
+
+                        <a class="nav-link {{ Route::is('barcode.index')  ? 'active' : '' }}" href="{{ route('barcode.index') }}">Print Barcode</a>
 
                     @endif
 

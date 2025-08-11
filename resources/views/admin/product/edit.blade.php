@@ -191,9 +191,9 @@
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Fabric</label>
+                                <label class="form-label">Matrial</label>
                                 <select name="fabric_id" class="form-select ">
-                                     <option value="">Select Fabric</option>
+                                     <option value="">Select Matrial</option>
                                     @foreach($fabrics as $fabric)
                                     <option value="{{ $fabric->id }}" @selected($product->fabric_id == $fabric->id)>{{ $fabric->name }}</option>
                                     @endforeach
@@ -234,7 +234,7 @@
             <div class="card mb-4">
                 <div class="card-body">
                     <h5 class="card-title mb-3">Other Category</h5>
-                    @foreach(['Top', 'Latest', 'Trending'] as $item)
+                    @foreach(['New', 'Trending', 'Discount'] as $item)
                     @php $itemValue = strtolower($item); @endphp
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="other_categories[]" value="{{ $itemValue }}" id="other_cat_{{ $itemValue }}"
@@ -317,6 +317,18 @@ document.addEventListener('DOMContentLoaded', function() {
         getSubSubcategories: id => `{{ url('get-sub-subcategories') }}/${id}`,
         getSizeChartEntries: id => `{{ route('get.size-chart.entries', ':id') }}`.replace(':id', id)
     };
+
+     // --- Auto-generate Product Code ---
+    $('input[name="name"]').on('keyup change', function() {
+        const productName = $(this).val();
+        const productCodeInput = $('#product_code'); // Make sure your product code input has id="product_code"
+        
+        if (productName.length > 2) {
+            const prefix = productName.substring(0, 4).toUpperCase().replace(/\s+/g, '');
+            const timestamp = Date.now().toString().slice(-5);
+            productCodeInput.val(`${prefix}-${timestamp}`);
+        }
+    });
 
     // --- Dependent Category Dropdowns ---
     function fetchSubcategories(categoryId, selectedSubcategoryId = null) {

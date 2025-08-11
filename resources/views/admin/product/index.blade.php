@@ -105,7 +105,7 @@ $(document).ready(function() {
                         product.variants.forEach(variant => {
                             if (variant.sizes && Array.isArray(variant.sizes)) {
                                 variant.sizes.forEach(sizeInfo => {
-                                    totalStock += parseInt(sizeInfo.quantity, 10) || 0;
+                                    totalStock +=  Number(sizeInfo.quantity);
                                 });
                             }
                         });

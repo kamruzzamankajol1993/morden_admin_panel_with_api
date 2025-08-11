@@ -16,6 +16,7 @@ use App\Models\AnimationCategory; // Add this
 use App\Models\SizeChart;
 use App\Models\AssignChart;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Intervention\Image\Laravel\Facades\Image;
@@ -58,7 +59,8 @@ class ProductController extends Controller
 
     public function index()
     {
-        // Pass all sizes to the view, keyed by ID for easy lookup in the script
+
+
         $sizes = Size::all()->keyBy('id');
         return view('admin.product.index', compact('sizes'));
     }
@@ -103,7 +105,7 @@ class ProductController extends Controller
             'unit_id' => 'required|exists:units,id',
             'base_price' => 'required|numeric|min:0',
             'purchase_price' => 'required|numeric|min:0',
-            'thumbnail_image.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'thumbnail_image.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'size_chart_id' => 'nullable|exists:size_charts,id',
             'chart_entries' => 'nullable|array',
         ]);
@@ -182,7 +184,9 @@ class ProductController extends Controller
                     }
 
                     // Filter out sizes that don't have a quantity
-                    $sizes = array_filter($variantData['sizes'], fn($size) => !is_null($size['quantity']) && $size['quantity'] > 0);
+                   // **FIXED LOGIC HERE**
+                    $sizesWithKeys = array_filter($variantData['sizes'], fn($size) => isset($size['quantity']) && $size['quantity'] !== null);
+                    $sizes = array_values($sizesWithKeys); // Re-index the array to remove keys
 
                     if (!empty($sizes)) {
                         $product->variants()->create([
@@ -236,20 +240,36 @@ class ProductController extends Controller
             'base_price' => 'required|numeric|min:0',
             'purchase_price' => 'required|numeric|min:0',
             'discount_price' => 'nullable|numeric|lt:base_price',
-            'thumbnail_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'thumbnail_image.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'variants' => 'nullable|array',
         ]);
 
         //dd($request->all());
 
         DB::transaction(function () use ($request, $product) {
-            $thumbnailPath = $product->thumbnail_image;
-            $mainPath = $product->main_image;
+
+         
+
             if ($request->hasFile('thumbnail_image')) {
+
                 $this->deleteImage($product->thumbnail_image);
                 $this->deleteImage($product->main_image);
-                $thumbnailPath = $this->uploadImageMobile($request->file('thumbnail_image'), 'products/thumbnails');
-                $mainPath = $this->uploadImage($request->file('thumbnail_image'), 'products/thumbnails');
+
+                
+                foreach ($request->file('thumbnail_image') as $image) {
+                    $thumbnailPaths[] = $this->uploadImageMobile($image, 'products/thumbnails');
+                }
+
+                 foreach ($request->file('thumbnail_image') as $image) {
+                    $mainPaths[] = $this->uploadImage($image, 'products/thumbnails');
+                }
+            
+            }else{
+
+                $thumbnailPaths = $product->thumbnail_image;
+            $mainPaths = $product->main_image;
+
+
             }
 
             $product->update([
@@ -266,8 +286,8 @@ class ProductController extends Controller
                 'base_price' => $request->base_price,
                 'purchase_price' => $request->purchase_price,
                 'discount_price' => $request->discount_price,
-                'thumbnail_image' => $thumbnailPath,
-                'main_image' => $mainPath,
+                'thumbnail_image' => $thumbnailPaths,
+                'main_image' => $mainPaths,
                 'status' => $request->status ?? 1,
             ]);
 
@@ -329,7 +349,8 @@ class ProductController extends Controller
                         $variantImagePathmain = $variantData['existing_image'];
                     }
 
-                    $sizes = array_filter($variantData['sizes'], fn($size) => !is_null($size['quantity']) && $size['quantity'] > 0);
+                    $sizesWithKeys = array_filter($variantData['sizes'], fn($size) => isset($size['quantity']) && $size['quantity'] !== null);
+                    $sizes = array_values($sizesWithKeys); // Re-index the array
 
                     if (!empty($sizes)) {
                         $product->variants()->create([

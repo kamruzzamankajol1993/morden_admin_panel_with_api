@@ -24,7 +24,7 @@
                         <hr>
                         <div class="row">
                             <div class="col-md-4"><strong>Description:</strong></div>
-                            <div class="col-md-8">{{ $product->description ?? 'No description provided.' }}</div>
+                            <div class="col-md-8">{!! $product->description ?? 'No description provided.' !!}</div>
                         </div>
                     </div>
                 </div>

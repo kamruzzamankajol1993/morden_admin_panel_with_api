@@ -128,9 +128,9 @@
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Fabric</label>
+                                <label class="form-label">Matrial</label>
                                 <select name="fabric_id" class="form-select ">
-                                     <option value="">Select Fabric</option>
+                                     <option value="">Select Matrial</option>
                                     @foreach($fabrics as $fabric)
                                     <option value="{{ $fabric->id }}">{{ $fabric->name }}</option>
                                     @endforeach
@@ -165,7 +165,7 @@
                     <div class="card mb-4">
                         <div class="card-body">
                             <h5 class="card-title mb-3">Other Category</h5>
-                            @foreach(['Top', 'Latest', 'Trending'] as $item)
+                            @foreach(['New', 'Trending', 'Discount'] as $item)
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="other_categories[]" value="{{ strtolower($item) }}" id="other_cat_{{ strtolower($item) }}">
                                 <label class="form-check-label" for="other_cat_{{ strtolower($item) }}">
@@ -237,7 +237,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
   // --- Auto-generate Product Code ---
-    $('input[name="name"]').on('keyup', function() {
+    $('input[name="name"]').on('keyup change', function() {
         const productName = $(this).val();
         const productCodeInput = $('#product_code'); // Make sure your product code input has id="product_code"
         

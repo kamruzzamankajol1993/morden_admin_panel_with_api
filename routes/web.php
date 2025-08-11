@@ -45,7 +45,7 @@ use App\Http\Controllers\Admin\FabricController;
 use App\Http\Controllers\Admin\SizeChartController;
 use App\Http\Controllers\Admin\SizeController;
 use App\Http\Controllers\Admin\ProductController;
-
+use App\Http\Controllers\Admin\BarcodeController;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
@@ -104,6 +104,13 @@ Route::controller(AuthController::class)->group(function () {
 
 
 Route::group(['middleware' => ['auth']], function() {
+
+
+     Route::get('barcode', [BarcodeController::class, 'index'])->name('barcode.index');
+    Route::get('barcode/search', [BarcodeController::class, 'search'])->name('barcode.search');
+    Route::post('barcode/print', [BarcodeController::class, 'print'])->name('barcode.print');
+
+    
 Route::get('ajax_brands', [BrandController::class, 'data'])->name('ajax.brand.data');
 Route::resource('brand', BrandController::class);
 
