@@ -48,4 +48,9 @@ class ProductVariant extends Model
     {
         return $this->belongsTo(Color::class);
     }
+
+    public function bundleOfferProducts()
+{
+    return $this->hasMany(BundleOfferProduct::class);
+}
 }

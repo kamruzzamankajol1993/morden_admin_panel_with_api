@@ -113,12 +113,29 @@
                     </ul>
                 </li>
                 @endif
+               
                 <li class="nav-item">
                     <a class="nav-link" href="#">
                         <i data-feather="users"></i>
                         <span>Customers</span>
                     </a>
                 </li>
+
+                    @if ( $usr->can('bundleofferAdd') || $usr->can('bundleofferView') ||  $usr->can('bundleofferDelete') ||  $usr->can('bundleofferUpdate'))
+                <li class="sidebar-title">
+                    <span>Offer</span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#offerSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="offerSubmenu">
+                        <i data-feather="file-text"></i>
+                        <span>Offer List</span>
+                        <i data-feather="chevron-down" class="ms-auto"></i>
+                    </a>
+                    <ul class="collapse list-unstyled {{Route::is('bundle-offer.show') || Route::is('bundle-offer.create') || Route::is('bundle-offer.edit') || Route::is('bundle-offer.index')  ? 'show' : '' }}" id="offerSubmenu" data-bs-parent="#sidebar-menu">
+                        <li><a class="nav-link {{Route::is('bundle-offer.show') || Route::is('bundle-offer.create') || Route::is('bundle-offer.edit') || Route::is('bundle-offer.index')  ? 'active' : '' }}" href="{{route('bundle-offer.index')}}">Offer Name</a></li>
+                    </ul>
+                </li>
+                @endif
                 <li class="nav-item">
                     <a class="nav-link" href="#">
                         <i data-feather="bar-chart-2"></i>
@@ -179,6 +196,21 @@
                         <li><a class="nav-link" href="#">Customer Report</a></li>
                     </ul>
                 </li>
+                 @if ( $usr->can('headerAdd') || $usr->can('headerView') ||  $usr->can('headerDelete') ||  $usr->can('headerUpdate'))
+                <li class="sidebar-title">
+                    <span>CMS</span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#cmsSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="cmsSubmenu">
+                        <i data-feather="file-text"></i>
+                        <span>Website CMS</span>
+                        <i data-feather="chevron-down" class="ms-auto"></i>
+                    </a>
+                    <ul class="collapse list-unstyled {{ Route::is('frontend.control.index')  ? 'show' : '' }}" id="cmsSubmenu" data-bs-parent="#sidebar-menu">
+                        <li><a class="nav-link {{ Route::is('frontend.control.index')  ? 'active' : '' }}" href="{{route('frontend.control.index')}}">Big Screen Header</a></li>
+                    </ul>
+                </li>
+                @endif
                 @if ( $usr->can('userAdd') || $usr->can('userView') ||  $usr->can('userDelete') ||  $usr->can('userUpdate') || $usr->can('designationAdd') || $usr->can('designationView') ||  $usr->can('designationDelete') ||  $usr->can('designationUpdate') || $usr->can('branchAdd') || $usr->can('branchView') ||  $usr->can('branchDelete') ||  $usr->can('branchUpdate'))
                 <li class="sidebar-title">
                     <span>Settings</span>

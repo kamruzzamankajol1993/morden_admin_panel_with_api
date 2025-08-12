@@ -46,6 +46,8 @@ use App\Http\Controllers\Admin\SizeChartController;
 use App\Http\Controllers\Admin\SizeController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\BarcodeController;
+use App\Http\Controllers\Admin\FrontendControlController;
+use App\Http\Controllers\Admin\BundleOfferController;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
@@ -104,6 +106,13 @@ Route::controller(AuthController::class)->group(function () {
 
 
 Route::group(['middleware' => ['auth']], function() {
+
+      Route::get('ajax-bundle-offers', [BundleOfferController::class, 'data'])->name('ajax.bundle-offer.data');
+    Route::get('bundle-offer-search-products', [BundleOfferController::class, 'searchProducts'])->name('bundle-offer.search-products');
+    Route::resource('bundle-offer', BundleOfferController::class);
+
+    Route::get('frontend-control', [FrontendControlController::class, 'index'])->name('frontend.control.index');
+    Route::post('frontend-control', [FrontendControlController::class, 'update'])->name('frontend.control.update');
 
 
      Route::get('barcode', [BarcodeController::class, 'index'])->name('barcode.index');
