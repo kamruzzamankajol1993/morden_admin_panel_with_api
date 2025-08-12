@@ -196,7 +196,8 @@ $panelSettingInfo = SystemInformation::where('branch_id',Auth::user()->branch_id
                     $directory = 'public/uploads/';
                     $imageUrl = $directory.$imageName;
 
-                    $img=Image::read($productImage)->resize(140,50);
+                    $img=Image::read($productImage);
+                        // ->resize(140,50);
                     $img->save($imageUrl);
 
                     $systemInformation->logo =  'public/uploads/'.$imageName;
@@ -267,7 +268,8 @@ $panelSettingInfo = SystemInformation::where('branch_id',Auth::user()->branch_id
             $directory = 'public/uploads/';
             $imageUrl = $directory.$imageName;
 
-            $img=Image::read($productImage)->resize(140,50);
+            $img=Image::read($productImage);
+                        // ->resize(140,50);
             $img->save($imageUrl);
 
             $systemInformation->logo =  'public/uploads/'.$imageName;

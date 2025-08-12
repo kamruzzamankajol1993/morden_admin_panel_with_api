@@ -12,6 +12,10 @@
                         <label class="form-label text-dark">Category Name</label>
                         <input type="text" name="name" class="form-control" placeholder="Enter Category Name" required>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label text-dark">Image</label>
+                        <input type="file" name="image" class="form-control">
+                    </div>
                     <div>
                         <button type="submit" class="btn btn-primary btn-sm w-md mt-4">Submit</button>
                     </div>

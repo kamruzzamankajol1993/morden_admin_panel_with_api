@@ -15,7 +15,7 @@
     <!-- Title -->
     <title>Forgot Password</title>
     <!-- Favicon -->
-    <link rel="shortcut icon" href="{{ asset('/') }}{{ $icon }}">
+    <link rel="shortcut icon" href="{{ asset('/') }}{{ $front_icon_name }}">
     <!-- Bootstrap -->
     <link rel="stylesheet" href="{{asset('/')}}public/admin/assets/css/bootstrap.min.css">
     <!-- file upload -->
@@ -57,7 +57,7 @@
         <div class="auth-right py-40 px-24 flex-center flex-column">
             <div class="auth-right__inner mx-auto w-100">
                 <a href="{{route('home')}}" class="auth-right__logo">
-                    <img src="{{ asset('/') }}{{ $logo }}" alt="">
+                    <img src="{{ asset('/') }}{{ $front_logo_name }}" alt="">
                 </a>
                
                     @include('flash_message')   

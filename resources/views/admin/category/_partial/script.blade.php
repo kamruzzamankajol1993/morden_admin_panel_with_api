@@ -12,22 +12,21 @@
 
     function fetchData() {
         $.get(routes.fetch, {
-            page: currentPage,
-            search: searchTerm,
-            sort: sortColumn,
-            direction: sortDirection
+            page: currentPage, search: searchTerm, sort: sortColumn, direction: sortDirection
         }, function (res) {
             let rows = '';
-            res.data.forEach((category, i) => {
-                const statusBadge = category.status == 1 ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Inactive</span>';
+            res.data.forEach((item, i) => {
+                const imageUrl = item.image ? `{{ asset('public') }}/${item.image}` : 'https://placehold.co/50x50/EFEFEF/AAAAAA&text=No+Image';
+                const statusBadge = item.status == 1 ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Inactive</span>';
 
                 rows += `<tr>
                     <td>${(res.current_page - 1) * 10 + i + 1}</td>
-                    <td>${category.name}</td>
+                    <td><img src="${imageUrl}" alt="${item.name}" width="50" class="img-thumbnail"></td>
+                    <td>${item.name}</td>
                     <td>${statusBadge}</td>
                     <td>
-                        <button class="btn btn-sm btn-info btn-edit btn-custom-sm" data-id="${category.id}"><i class="fa fa-edit"></i></button>
-                        <button class="btn btn-sm btn-danger btn-delete btn-custom-sm" data-id="${category.id}"><i class="fa fa-trash"></i></button>
+                        <button class="btn btn-sm btn-info btn-edit" data-id="${item.id}"><i class="fa fa-edit"></i></button>
+                        <button class="btn btn-sm btn-danger btn-delete" data-id="${item.id}"><i class="fa fa-trash"></i></button>
                     </td>
                 </tr>`;
             });
@@ -49,84 +48,60 @@
         });
     }
 
-    $('#searchInput').on('keyup', function () {
-        searchTerm = $(this).val();
-        currentPage = 1;
-        fetchData();
-    });
-
+    $('#searchInput').on('keyup', function () { searchTerm = $(this).val(); currentPage = 1; fetchData(); });
     $(document).on('click', '.sortable', function () {
         let col = $(this).data('column');
         sortDirection = sortColumn === col ? (sortDirection === 'asc' ? 'desc' : 'asc') : 'asc';
         sortColumn = col;
         fetchData();
     });
+    $(document).on('click', '.page-link', function (e) { e.preventDefault(); currentPage = $(this).data('page'); fetchData(); });
 
-    $(document).on('click', '.page-link', function (e) {
-        e.preventDefault();
-        currentPage = parseInt($(this).data('page'));
-        fetchData();
-    });
-
-    // Show Edit Modal
     $(document).on('click', '.btn-edit', function () {
         const id = $(this).data('id');
-        $.get(routes.show(id), function (category) {
-            $('#editCategoryId').val(category.id);
-            $('#editName').val(category.name);
-            $('#editStatus').val(category.status);
+        $.get(routes.show(id), function (item) {
+            $('#editId').val(item.id);
+            $('#editName').val(item.name);
+            $('#editStatus').val(item.status);
+            if (item.image) {
+                $('#imagePreview').attr('src', `{{ asset('public') }}/${item.image}`).show();
+            } else {
+                $('#imagePreview').hide();
+            }
             editModal.show();
         });
     });
 
-    // Update Form Submission
-    $('#editCategoryForm').on('submit', function (e) {
+    $('#editForm').on('submit', function (e) {
         e.preventDefault();
-        const id = $('#editCategoryId').val();
+        const id = $('#editId').val();
         const btn = $(this).find('button[type="submit"]');
-        const data = {
-            name: $('#editName').val(),
-            status: $('#editStatus').val(),
-            _token: routes.csrf
-        };
+        let formData = new FormData(this);
+        formData.append('_method', 'PUT');
+        formData.append('_token', routes.csrf);
 
         btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
-
         $.ajax({
-            url: routes.update(id),
-            method: 'PUT',
-            data: data,
+            url: routes.update(id), method: 'POST', data: formData, processData: false, contentType: false,
             success() {
-                Swal.fire({ toast: true, icon: 'success', title: 'Category updated successfully', showConfirmButton: false, timer: 3000 });
+                Swal.fire({ toast: true, icon: 'success', title: 'Updated successfully', showConfirmButton: false, timer: 3000 });
                 editModal.hide();
                 fetchData();
             },
-            error(xhr) {
-                // Handle validation errors
-            },
-            complete() {
-                btn.prop('disabled', false).text('Save Changes');
-            }
+            complete() { btn.prop('disabled', false).text('Save Changes'); }
         });
     });
 
-    // Delete Action
     $(document).on('click', '.btn-delete', function () {
         const id = $(this).data('id');
         Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, delete it!'
+            title: 'Are you sure?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: routes.delete(id),
-                    method: 'DELETE',
-                    data: { _token: routes.csrf },
-                    success: function() {
-                        Swal.fire({ toast: true, icon: 'success', title: 'Category deleted successfully', showConfirmButton: false, timer: 3000 });
+                    url: routes.delete(id), method: 'DELETE', data: { _token: routes.csrf },
+                    success: () => {
+                        Swal.fire({ toast: true, icon: 'success', title: 'Deleted successfully', showConfirmButton: false, timer: 3000 });
                         fetchData();
                     }
                 });
@@ -134,5 +109,6 @@
         });
     });
 
+    $('#editModal').on('hidden.bs.modal', () => { $('#editForm')[0].reset(); $('#imagePreview').hide(); });
     fetchData();
 </script>

@@ -45,7 +45,7 @@ class AnimationCategoryController extends Controller
     {
         $request->validate([
             'name' => 'required|string|unique:animation_categories,name',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
         $path = null;

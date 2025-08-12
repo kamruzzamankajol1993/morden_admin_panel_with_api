@@ -76,10 +76,10 @@ body {
 }
 
 .auth-logo {
-    width: 60px;
+    width: 170px;
     height: 60px;
     object-fit: contain;
-    margin-bottom: 1rem;
+    /* margin-bottom: 1rem; */
 }
 
 .auth-title {
