@@ -9,7 +9,7 @@
                 <form class="d-flex me-2" role="search">
                     <input class="form-control" id="searchInput" type="search" placeholder="Search offers..." aria-label="Search">
                 </form>
-                <a href="{{ route('bundle-offer.create') }}" class="btn btn-primary">Create New Offer</a>
+                <a href="{{ route('bundle-offer.create') }}" class="btn text-white" style="background-color: var(--primary-color); white-space: nowrap;">Create New Offer</a>
             </div>
         </div>
         <div class="card">

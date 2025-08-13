@@ -6,21 +6,19 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\MenuItem;
 use App\Models\Category;
-use App\Models\Setting; // Make sure to import the Setting model
+use App\Models\BundleOffer; // Import the BundleOffer model
+use App\Models\Setting;
 
 class FrontendControlController extends Controller
 {
     public function index()
     {
-        // Sync categories with menu items table
+        // Sync both data sources with the menu items table
         $this->syncMenuItems();
 
         $menuItems = MenuItem::orderBy('order')->get();
         
-        // Fetch all settings and pluck them into a key-value array
         $settings = Setting::pluck('value', 'key');
-
-        // Get specific settings with default fallback values
         $headerColor = $settings['header_color'] ?? '#FFFFFF';
         $menuLimit = $settings['menu_limit'] ?? 8;
 
@@ -63,11 +61,21 @@ class FrontendControlController extends Controller
 
     private function syncMenuItems()
     {
+        // Sync Categories
         $categories = Category::where('status', 1)->get();
         foreach ($categories as $category) {
             MenuItem::firstOrCreate(
-                ['name' => $category->name],
+                ['name' => $category->name, 'type' => 'category'],
                 ['route' => '/category/' . $category->slug]
+            );
+        }
+
+        // Sync Bundle Offer Groups
+        $BundleOffers = BundleOffer::all();
+        foreach ($BundleOffers as $group) {
+            MenuItem::firstOrCreate(
+                ['name' => $group->name, 'type' => 'bundle_offer'],
+                ['route' => '/bundle-offer/' . $group->id] // Example route
             );
         }
     }

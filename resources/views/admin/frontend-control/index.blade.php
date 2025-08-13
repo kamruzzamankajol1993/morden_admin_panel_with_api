@@ -13,6 +13,10 @@
         cursor: move;
         font-size: 1.2rem;
     }
+    .item-type-badge {
+        font-size: 0.75em;
+        padding: 0.25em 0.5em;
+    }
 </style>
 @endsection
 
@@ -58,7 +62,14 @@
                                     <input type="hidden" name="menus[{{ $loop->index }}][id]" value="{{ $item->id }}">
                                     <input type="hidden" class="menu-order" name="menus[{{ $loop->index }}][order]" value="{{ $item->order }}">
                                     
-                                    <span class="fw-bold flex-grow-1">{{ $item->name }}</span>
+                                    <div class="flex-grow-1">
+                                        <span class="fw-bold">{{ $item->name }}</span><br>
+                                        @if($item->type === 'category')
+                                            <span class="badge bg-primary-soft text-primary item-type-badge">Category</span>
+                                        @elseif($item->type === 'bundle_offer')
+                                            <span class="badge bg-success-soft text-success item-type-badge">Bundle Offer</span>
+                                        @endif
+                                    </div>
                                     
                                     <div class="input-group input-group-sm" style="max-width: 250px;">
                                         <span class="input-group-text">Route</span>

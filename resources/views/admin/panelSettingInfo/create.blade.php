@@ -60,6 +60,12 @@ Panel Setting | {{ $ins_name }}
                 <label class="form-label">System Icon<span class="text-red font-w900">*</span>  </label>
                 <input type="file" class="form-control" name="icon" id="" placeholder="System Icon" required>
             </div>
+
+            <div class="col-xl-12 col-xxl-12 col-sm-12 mb-3">
+                <label class="form-label">Admin Url<span class="text-red font-w900">*</span>  </label>
+                <input type="text" class="form-control" name="main_url" id="" placeholder="Admin Url" required>
+            </div>
+
             <div class="col-xl-6 col-xxl-6 col-sm-6 mb-3">
                 <label class="form-label">Tax(%)<span class="text-red font-w900">*</span>  </label>
                 <input type="number" class="form-control" name="tax" id="" placeholder="Tax" required>

@@ -48,6 +48,10 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\BarcodeController;
 use App\Http\Controllers\Admin\FrontendControlController;
 use App\Http\Controllers\Admin\BundleOfferController;
+use App\Http\Controllers\Admin\OfferDetailController;
+use App\Http\Controllers\Admin\SidebarMenuController;
+
+
 // Route::get('/', function () {
 //     return view('welcome');
 // });
@@ -107,9 +111,17 @@ Route::controller(AuthController::class)->group(function () {
 
 Route::group(['middleware' => ['auth']], function() {
 
-      Route::get('ajax-bundle-offers', [BundleOfferController::class, 'data'])->name('ajax.bundle-offer.data');
-    Route::get('bundle-offer-search-products', [BundleOfferController::class, 'searchProducts'])->name('bundle-offer.search-products');
-    Route::resource('bundle-offer', BundleOfferController::class);
+ Route::get('sidebar-menu-control', [SidebarMenuController::class, 'index'])->name('sidebar-menu.control.index');
+    Route::post('sidebar-menu-control', [SidebarMenuController::class, 'update'])->name('sidebar-menu.control.update');
+    
+     Route::resource('bundle-offer', BundleOfferController::class);
+    Route::get('ajax-bundle-offer-data', [BundleOfferController::class, 'data'])->name('ajax.bundle-offer.data');
+    Route::get('ajax-bundle-offer-search-products', [BundleOfferController::class, 'searchProducts'])->name('ajax.bundle-offer.search-products');
+
+    // Routes for managing the specific Product Deals
+    Route::resource('offer-product', OfferDetailController::class);
+    // --- NEW: AJAX route for the product deals table ---
+    Route::get('ajax-offer-product-data', [OfferDetailController::class, 'data'])->name('ajax.offer-product.data');
 
     Route::get('frontend-control', [FrontendControlController::class, 'index'])->name('frontend.control.index');
     Route::post('frontend-control', [FrontendControlController::class, 'update'])->name('frontend.control.update');

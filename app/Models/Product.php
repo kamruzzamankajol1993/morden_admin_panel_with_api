@@ -107,10 +107,7 @@ class Product extends Model
         return $this->hasMany(AssignCategory::class);
     }
 
-    public function bundleOfferProducts()
-{
-    return $this->hasMany(BundleOfferProduct::class);
-}
+    
 
 
     /**

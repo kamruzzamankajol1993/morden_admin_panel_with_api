@@ -30,8 +30,6 @@ class User extends Authenticatable
         'user_type',
         'password',
         'viewpassword',
-         'markamounttype',
-          'markupamount',
     ];
 
     /**

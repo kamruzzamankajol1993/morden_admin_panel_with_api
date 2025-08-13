@@ -56,21 +56,7 @@ User Management | {{ $ins_name }}
                 </select>
             </div>
 
-               <div class="col-xl-6 col-xxl-6 col-sm-6 mb-3">
-                <label class="form-label">MarkUp Type<span class="text-red font-w900">*</span>  </label>
-                <select name="markamounttype" class="form-control" required>
-                        <option value="">--select type--</option>
-                  <option value="percentage" {{ $user->markamounttype == 'percentage' ? 'selected':'' }}>Percentage</option>
-                        <option value="flat" {{ $user->markamounttype == 'flat' ? 'selected':'' }}>Flat</option>
-                   
-                </select>
-            </div>
-
-            <div class="col-xl-6 col-xxl-6 col-sm-6 mb-3">
-                <label class="form-label">Mark Up<span class="text-red font-w900">*</span>  </label>
-                <input 
-                type = "number" class="form-control roles" id="text"  id="" value="{{ $user->markupamount }}"  name="markupamount" placeholder="Mark Up" required>
-            </div>
+           
 
 
             <div class="col-xl-6 col-xxl-6 col-sm-6 mb-3">

@@ -16,17 +16,9 @@ class BundleOffer extends Model
     ];
 
     /**
-     * Get all of the tiers for the BundleOffer.
+     * Get the product sets for the bundle offer.
      */
-    public function tiers()
-    {
-        return $this->hasMany(BundleOfferTier::class);
-    }
-
-    /**
-     * Get all of the products for the BundleOffer.
-     */
-    public function products()
+    public function bundleOfferProducts()
     {
         return $this->hasMany(BundleOfferProduct::class);
     }

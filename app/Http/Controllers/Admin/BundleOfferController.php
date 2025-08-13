@@ -104,48 +104,19 @@ class BundleOfferController extends Controller
     }
 
     // AJAX method for product search
-    public function searchProducts(Request $request)
+  public function searchProducts(Request $request)
     {
         $term = $request->get('term');
-        $results = [];
+        $excludeIds = $request->get('exclude', []);
 
-        // Search Products that DO NOT have variants
-        $products = Product::doesntHave('variants')
-            ->where(function ($query) use ($term) {
+        $products = Product::where(function ($query) use ($term) {
                 $query->where('name', 'LIKE', "%{$term}%")
                       ->orWhere('product_code', 'LIKE', "%{$term}%");
             })
-            ->limit(5)
-            ->get();
-
-        foreach ($products as $product) {
-            $results[] = [
-                'id' => $product->id,
-                'name' => $product->name,
-                'type' => 'product',
-                'label' => "{$product->name} (Product)",
-            ];
-        }
-
-        // Search Product Variants
-        $variants = ProductVariant::with('product', 'color')
-            ->whereHas('product', function ($query) use ($term) {
-                $query->where('name', 'LIKE', "%{$term}%")
-                      ->orWhere('product_code', 'LIKE', "%{$term}%");
-            })
-            ->orWhere('variant_sku', 'LIKE', "%{$term}%")
+            ->whereNotIn('id', $excludeIds)
             ->limit(10)
-            ->get();
+            ->get(['id', 'name', 'base_price', 'product_code']);
 
-        foreach ($variants as $variant) {
-            $results[] = [
-                'id' => $variant->id,
-                'name' => "{$variant->product->name} - {$variant->color->name}",
-                'type' => 'variant',
-                'label' => "{$variant->product->name} - {$variant->color->name} (Variant)",
-            ];
-        }
-
-        return response()->json($results);
+        return response()->json($products);
     }
 }

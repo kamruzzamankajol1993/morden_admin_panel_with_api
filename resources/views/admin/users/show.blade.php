@@ -110,14 +110,7 @@ User Management | {{ $ins_name }}
                                             @endif
                                         </div>
                                     </div>
-                                    <div class="row mb-2">
-                                        <div class="col-sm-4 fw-bold"><i class="bi bi-cash-stack me-1"></i>Mark Amount Type:</div>
-                                        <div class="col-sm-8">{{ $user->markamounttype }}</div>
-                                    </div>
-                                    <div class="row mb-2">
-                                        <div class="col-sm-4 fw-bold"><i class="bi bi-currency-dollar me-1"></i>Markup Amount:</div>
-                                        <div class="col-sm-8">{{ $user->markupamount }}</div>
-                                    </div>
+                                   
                                 </div>
                             </div>
                         </div>
