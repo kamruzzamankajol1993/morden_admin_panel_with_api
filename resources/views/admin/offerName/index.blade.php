@@ -9,7 +9,7 @@
                 <form class="d-flex me-2" role="search">
                     <input class="form-control" id="searchInput" type="search" placeholder="Search offers..." aria-label="Search">
                 </form>
-                <a href="{{ route('bundle-offer.create') }}" class="btn text-white" style="background-color: var(--primary-color); white-space: nowrap;">Create New Offer</a>
+                <a href="{{ route('bundle-offer.create') }}" class="btn btn-primary">Create New Offer</a>
             </div>
         </div>
         <div class="card">
@@ -20,9 +20,10 @@
                         <thead>
                             <tr>
                                 <th>Sl</th>
+                                <th>Image</th>
                                 <th class="sortable" data-column="name">Name</th>
                                 <th class="sortable" data-column="title">Title</th>
-                                
+                                <th>Dates</th>
                                 <th class="sortable" data-column="status">Status</th>
                                 <th>Action</th>
                             </tr>
@@ -34,7 +35,7 @@
                 </div>
             </div>
             <div class="card-footer bg-white d-flex justify-content-between align-items-center">
-                <div class="text-muted"></div>
+                <div class="text-muted" id="pagination-info"></div>
                 <nav>
                     <ul class="pagination justify-content-center" id="pagination"></ul>
                 </nav>
@@ -48,29 +49,33 @@
 $(document).ready(function() {
     var currentPage = 1, searchTerm = '', sortColumn = 'id', sortDirection = 'desc';
 
-    var routes = {
-        fetch: "{{ route('ajax.bundle-offer.data') }}", // Ensure this route is defined
-        destroy: id => `{{ url('bundle-offer') }}/${id}`,
-        csrf: "{{ csrf_token() }}"
-    };
-
     function fetchData() {
-        $.get(routes.fetch, {
+        $.get("{{ route('ajax.bundle-offer.data') }}", {
             page: currentPage, search: searchTerm, sort: sortColumn, direction: sortDirection
         }, function (res) {
             let rows = '';
             if (res.data.length === 0) {
-                rows = '<tr><td colspan="7" class="text-center">No offer Name found.</td></tr>';
+                rows = '<tr><td colspan="7" class="text-center">No offers found.</td></tr>';
             } else {
                 res.data.forEach((offer, i) => {
                     const statusBadge = offer.status == 1 ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Inactive</span>';
-                    const showUrl = `{{ url('bundle-offer') }}/${offer.id}`;
                     const editUrl = `{{ url('bundle-offer') }}/${offer.id}/edit`;
+                  const defaultImageUrl = `https://placehold.co/50x50/eee/ccc?text=No+Img`;
+                    const imageUrl = offer.image ? `{{ asset('/') }}public/${offer.image}` : defaultImageUrl;
+                    
+                    // Format dates without time
+                    const startDate = offer.startdate ? new Date(offer.startdate).toLocaleDateString('en-CA') : 'N/A'; // en-CA gives YYYY-MM-DD format
+                    const endDate = offer.enddate ? new Date(offer.enddate).toLocaleDateString('en-CA') : 'N/A';
+                    
+                    // Correctly calculate the serial number
+                    const serialNumber = (res.current_page - 1) * res.per_page + i + 1;
 
                     rows += `<tr>
-                        <td>${(res.current_page - 1) * 10 + i + 1}</td>
+                        <td>${serialNumber}</td>
+                        <td><img src="${imageUrl}" width="50" class="img-thumbnail"></td>
                         <td>${offer.name}</td>
                         <td>${offer.title}</td>
+                        <td>${startDate} - ${endDate}</td>
                         <td>${statusBadge}</td>
                         <td>
                             <a href="${editUrl}" class="btn btn-sm btn-info"><i class="fa fa-edit"></i></a>
@@ -80,19 +85,17 @@ $(document).ready(function() {
                 });
             }
             $('#tableBody').html(rows);
+            // Check if 'from' and 'to' exist before displaying
+            const paginationInfo = res.from && res.to ? `Showing ${res.from} to ${res.to} of ${res.total} entries` : '';
+            $('#pagination-info').text(paginationInfo);
+
 
             // Pagination logic
             let paginationHtml = '';
             if (res.last_page > 1) {
-                 paginationHtml += `<li class="page-item ${res.current_page === 1 ? 'disabled' : ''}"><a class="page-link" href="#" data-page="1">First</a></li>`;
-                paginationHtml += `<li class="page-item ${res.current_page === 1 ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${res.current_page - 1}">Prev</a></li>`;
-                const startPage = Math.max(1, res.current_page - 2);
-                const endPage = Math.min(res.last_page, res.current_page + 2);
-                for (let i = startPage; i <= endPage; i++) {
-                    paginationHtml += `<li class="page-item ${i === res.current_page ? 'active' : ''}"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
+                 for (let i = 1; i <= res.last_page; i++) {
+                     paginationHtml += `<li class="page-item ${i === res.current_page ? 'active' : ''}"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
                 }
-                paginationHtml += `<li class="page-item ${res.current_page === res.last_page ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${res.current_page + 1}">Next</a></li>`;
-                paginationHtml += `<li class="page-item ${res.current_page === res.last_page ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${res.last_page}">Last</a></li>`;
             }
             $('#pagination').html(paginationHtml);
         });
@@ -117,12 +120,12 @@ $(document).ready(function() {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: routes.destroy(id),
+                    url: `{{ url('bundle-offer') }}/${id}`,
                     method: 'DELETE',
-                    data: { _token: routes.csrf },
+                    data: { _token: "{{ csrf_token() }}" },
                     success: function() {
                         Swal.fire('Deleted!', 'The offer has been deleted.', 'success');
-                        fetchData(); // Refresh the table
+                        fetchData();
                     }
                 });
             }

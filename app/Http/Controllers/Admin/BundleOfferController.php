@@ -7,6 +7,8 @@ use App\Models\BundleOffer;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use Illuminate\Http\Request;
+use Intervention\Image\Laravel\Facades\Image;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
 
 class BundleOfferController extends Controller
@@ -17,7 +19,8 @@ class BundleOfferController extends Controller
         return view('admin.offerName.index');
     }
 
-    public function data(Request $request)
+    
+         public function data(Request $request)
     {
         $query = BundleOffer::query();
 
@@ -32,13 +35,11 @@ class BundleOfferController extends Controller
 
         $offers = $query->paginate(10);
 
-        return response()->json([
-            'data' => $offers->items(),
-            'total' => $offers->total(),
-            'current_page' => $offers->currentPage(),
-            'last_page' => $offers->lastPage(),
-        ]);
+        // The pagination object already contains all the necessary data.
+        // No need to manually construct an array.
+        return response()->json($offers);
     }
+    
 
     public function create()
     {
@@ -50,16 +51,33 @@ class BundleOfferController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'title' => 'required|string|max:255',
+            
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'startdate' => 'nullable|date',
+            'enddate' => 'nullable|date|after_or_equal:startdate',
         ]);
 
-        DB::transaction(function () use ($request) {
-            $bundleOffer = BundleOffer::create([
-                'name' => $request->name,
-                'title' => $request->title,
-                'status' => $request->status ?? 1,
-            ]);
+           $data = $request->except('_token', 'image');
 
-        });
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $directory = public_path('uploads/offers/');
+            
+            // Ensure the directory exists
+            if (!File::isDirectory($directory)) {
+                File::makeDirectory($directory, 0755, true, true);
+            }
+
+            // Resize and save the image using Intervention Image
+            Image::read($image)->resize(660, 350, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($directory . $imageName);
+
+            $data['image'] = 'uploads/offers/' . $imageName;
+        }
+
+        BundleOffer::create($data);
 
         return redirect()->route('bundle-offer.index')->with('success', 'offer created successfully.');
     }
@@ -81,26 +99,49 @@ class BundleOfferController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'title' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'startdate' => 'nullable|date',
+            'enddate' => 'nullable|date|after_or_equal:startdate',
         ]);
 
-        DB::transaction(function () use ($request, $bundleOffer) {
-            $bundleOffer->update([
-                'name' => $request->name,
-                'title' => $request->title,
-                'status' => $request->status ?? 1,
-            ]);
+        $data = $request->except('_token', '_method', 'image');
 
-          
-        });
+        if ($request->hasFile('image')) {
+            // Delete old image if it exists
+            if (File::exists(public_path($bundleOffer->image))) {
+                File::delete(public_path($bundleOffer->image));
+            }
+
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $directory = public_path('uploads/offers/');
+
+            // Ensure the directory exists
+            if (!File::isDirectory($directory)) {
+                File::makeDirectory($directory, 0755, true, true);
+            }
+
+            // Resize and save the new image using Intervention Image
+            Image::read($image)->resize(660, 350, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($directory . $imageName);
+
+            $data['image'] = 'uploads/offers/' . $imageName;
+        }
+
+        $bundleOffer->update($data);
 
         return redirect()->route('bundle-offer.index')->with('success', 'offer updated successfully.');
     }
 
     public function destroy(BundleOffer $bundleOffer)
     {
+         // Delete the image file when the offer is deleted
+        if (File::exists(public_path($bundleOffer->image))) {
+            File::delete(public_path($bundleOffer->image));
+        }
         $bundleOffer->delete();
-        // Return a JSON response for the AJAX call
-        return response()->json(['message' => 'offer deleted successfully.']);
+        return response()->json(['message' => 'Offer deleted successfully.']);
     }
 
     // AJAX method for product search

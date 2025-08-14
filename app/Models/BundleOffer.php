@@ -13,8 +13,14 @@ class BundleOffer extends Model
         'name',
         'title',
         'status',
+        'image',
+        'startdate',
+        'enddate',
     ];
-
+protected $casts = [
+        'startdate' => 'datetime',
+        'enddate' => 'datetime',
+    ];
     /**
      * Get the product sets for the bundle offer.
      */

@@ -50,6 +50,8 @@ use App\Http\Controllers\Admin\FrontendControlController;
 use App\Http\Controllers\Admin\BundleOfferController;
 use App\Http\Controllers\Admin\OfferDetailController;
 use App\Http\Controllers\Admin\SidebarMenuController;
+use App\Http\Controllers\Admin\OfferSectionController;
+use App\Http\Controllers\Admin\SliderControlController;
 
 
 // Route::get('/', function () {
@@ -110,6 +112,13 @@ Route::controller(AuthController::class)->group(function () {
 
 
 Route::group(['middleware' => ['auth']], function() {
+
+    Route::get('slider-control', [SliderControlController::class, 'index'])->name('slider.control.index');
+    Route::post('slider-control', [SliderControlController::class, 'update'])->name('slider.control.update');
+    Route::get('slider-control/search', [SliderControlController::class, 'searchProducts'])->name('slider.control.search');
+
+    Route::get('offer-section-control', [OfferSectionController::class, 'index'])->name('offer-section.control.index');
+    Route::post('offer-section-control', [OfferSectionController::class, 'update'])->name('offer-section.control.update');
 
  Route::get('sidebar-menu-control', [SidebarMenuController::class, 'index'])->name('sidebar-menu.control.index');
     Route::post('sidebar-menu-control', [SidebarMenuController::class, 'update'])->name('sidebar-menu.control.update');
