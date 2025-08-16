@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->string('branch_id')->nullable();
             $table->string('user_type')->nullable();
+            $table->string('old_id')->nullable();
             $table->string('customer_id')->nullable();
             $table->string('status')->nullable();
             $table->string('designation_id')->nullable();

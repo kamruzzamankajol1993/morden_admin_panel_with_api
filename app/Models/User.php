@@ -24,6 +24,7 @@ class User extends Authenticatable
         'customer_id',
         'designation_id',
         'status',
+        'old_id',
         'phone',
         'address',
         'email',

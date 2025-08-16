@@ -5,13 +5,39 @@
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
             <h2 class="mb-0">Product List</h2>
-            <div class="d-flex align-items-center">
-                <form class="d-flex me-2" role="search">
-                    <input class="form-control" id="searchInput" type="search" placeholder="Search products..." aria-label="Search">
-                </form>
-                <a href="{{ route('product.create') }}" class="btn text-white" style="background-color: var(--primary-color); white-space: nowrap;">
-                    <i data-feather="plus" class="me-1" style="width:18px; height:18px;"></i> Add New Product
-                </a>
+            <a href="{{ route('product.create') }}" class="btn text-white" style="background-color: var(--primary-color); white-space: nowrap;">
+                <i data-feather="plus" class="me-1" style="width:18px; height:18px;"></i> Add New Product
+            </a>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Filter Products</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label for="productNameFilter" class="form-label">Product Name</label>
+                        <input type="text" class="form-control" id="productNameFilter" placeholder="Enter name...">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="productCodeFilter" class="form-label">Product Code</label>
+                        <input type="text" class="form-control" id="productCodeFilter" placeholder="Enter code...">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="categoryFilter" class="form-label">Category</label>
+                        <select id="categoryFilter" class="form-select">
+                            <option value="" selected>All Categories</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button class="btn btn-primary me-2" id="filterBtn">Filter</button>
+                        <button class="btn btn-secondary" id="resetBtn">Reset</button>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="card">
@@ -25,7 +51,6 @@
                                 <th>Image</th>
                                 <th class="sortable" data-column="name">Name</th>
                                 <th>Price</th>
-                               
                                 <th>Total Stock</th>
                                 <th class="sortable" data-column="created_at">Created At</th>
                                 <th class="sortable" data-column="status">Status</th>
@@ -47,7 +72,6 @@
         </div>
     </div>
 </main>
-<!-- Stock Details Modal -->
 <div class="modal fade" id="stockModal" tabindex="-1" aria-labelledby="stockModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -57,30 +81,60 @@
       </div>
       <div class="modal-body">
         <div id="stockModalBodyContent">
-          <!-- Stock details will be loaded here -->
-        </div>
+          </div>
       </div>
     </div>
   </div>
 </div>
 @endsection
+
 @section('script')
 <script>
 $(document).ready(function() {
     // Store all sizes passed from the controller for easy lookup
     const allSizes = @json($sizes);
 
-    var currentPage = 1, searchTerm = '', sortColumn = 'id', sortDirection = 'desc';
+    var currentPage = 1,
+        productName = '',
+        productCode = '',
+        categoryId = '',
+        sortColumn = 'id',
+        sortDirection = 'desc';
 
     var routes = {
         fetch: "{{ route('ajax.product.data') }}",
         destroy: id => `{{ route('product.destroy', ':id') }}`.replace(':id', id),
         csrf: "{{ csrf_token() }}"
     };
+    
+    // --- Debounce function to delay execution ---
+    function debounce(func, delay) {
+        let timeout;
+        return function(...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), delay);
+        };
+    }
 
     function fetchData() {
+        const loaderHtml = `
+            <tr>
+                <td colspan="8" class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2 mb-0">Fetching products...</p>
+                </td>
+            </tr>`;
+        $('#tableBody').html(loaderHtml);
+
         $.get(routes.fetch, {
-            page: currentPage, search: searchTerm, sort: sortColumn, direction: sortDirection
+            page: currentPage,
+            product_name: productName,
+            product_code: productCode,
+            category_id: categoryId,
+            sort: sortColumn,
+            direction: sortDirection
         }, function (res) {
             let rows = '';
             if (res.data.length === 0) {
@@ -93,13 +147,11 @@ $(document).ready(function() {
                     const editUrl = `{{ url('product') }}/${product.id}/edit`;
                     const showUrl = `{{ url('product') }}/${product.id}`;
 
-                    // --- PRICE LOGIC ---
                     let priceHtml = `<b>${product.base_price}</b>`;
                     if (product.discount_price) {
                         priceHtml = `<del>${product.base_price}</del><br><b>${product.discount_price}</b>`;
                     }
 
-                    // --- STOCK LOGIC ---
                     let totalStock = 0;
                     if (product.variants && product.variants.length > 0) {
                         product.variants.forEach(variant => {
@@ -111,7 +163,6 @@ $(document).ready(function() {
                         });
                     }
                     
-                    // Escape single quotes in product name for the data attribute
                     const safeProductName = product.name.replace(/'/g, "&apos;");
                     const variantsJson = JSON.stringify(product.variants);
                     const stockButton = `<button type="button" class="btn btn-sm btn-outline-secondary btn-stock-modal"
@@ -122,7 +173,6 @@ $(document).ready(function() {
                                             <b>${totalStock}</b>
                                          </button>`;
 
-                    // --- DATE FORMATTING ---
                     const createdAt = new Date(product.created_at).toLocaleDateString('en-US', {
                         day: '2-digit', month: 'short', year: 'numeric'
                     });
@@ -148,7 +198,7 @@ $(document).ready(function() {
             // Pagination logic
             let paginationHtml = '';
             if (res.last_page > 1) {
-                 paginationHtml += `<li class="page-item ${res.current_page === 1 ? 'disabled' : ''}"><a class="page-link" href="#" data-page="1">First</a></li>`;
+                paginationHtml += `<li class="page-item ${res.current_page === 1 ? 'disabled' : ''}"><a class="page-link" href="#" data-page="1">First</a></li>`;
                 paginationHtml += `<li class="page-item ${res.current_page === 1 ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${res.current_page - 1}">Prev</a></li>`;
                 const startPage = Math.max(1, res.current_page - 2);
                 const endPage = Math.min(res.last_page, res.current_page + 2);
@@ -162,7 +212,7 @@ $(document).ready(function() {
         });
     }
 
-    // --- Modal Population Logic ---
+    // Modal Population Logic
     $(document).on('click', '.btn-stock-modal', function() {
         const productName = $(this).data('product-name');
         const variants = $(this).data('variants');
@@ -203,13 +253,40 @@ $(document).ready(function() {
         }
     });
 
-    $('#searchInput').on('keyup', function () { searchTerm = $(this).val(); currentPage = 1; fetchData(); });
+    // --- Central function to apply filters and fetch data ---
+    function applyFiltersAndFetch() {
+        productName = $('#productNameFilter').val();
+        productCode = $('#productCodeFilter').val();
+        categoryId = $('#categoryFilter').val();
+        currentPage = 1; 
+        fetchData();
+    }
+
+    // --- Event handlers for filters ---
+    $('#filterBtn').on('click', applyFiltersAndFetch);
+    $('#categoryFilter').on('change', applyFiltersAndFetch);
+    $('#productNameFilter, #productCodeFilter').on('keyup', debounce(applyFiltersAndFetch, 400));
+
+    $('#resetBtn').on('click', function() {
+        $('#productNameFilter').val('');
+        $('#productCodeFilter').val('');
+        $('#categoryFilter').val('');
+        applyFiltersAndFetch();
+    });
+
+    // Other event handlers
     $(document).on('click', '.sortable', function () {
         let col = $(this).data('column');
         sortDirection = sortColumn === col ? (sortDirection === 'asc' ? 'desc' : 'asc') : 'asc';
-        sortColumn = col; fetchData();
+        sortColumn = col;
+        fetchData();
     });
-    $(document).on('click', '.page-link', function (e) { e.preventDefault(); currentPage = $(this).data('page'); fetchData(); });
+
+    $(document).on('click', '.page-link', function (e) {
+        e.preventDefault();
+        currentPage = $(this).data('page');
+        fetchData();
+    });
 
     $(document).on('click', '.btn-delete', function () {
         const id = $(this).data('id');
@@ -227,7 +304,7 @@ $(document).ready(function() {
                     data: { _token: routes.csrf },
                     success: function() {
                         Swal.fire('Deleted!', 'The product has been deleted.', 'success');
-                        fetchData(); // Refresh the table
+                        fetchData(); 
                     }
                 });
             }

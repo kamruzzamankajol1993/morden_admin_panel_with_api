@@ -242,6 +242,7 @@ Route::resource('defaultLocation', DefaultLocationController::class);
     Route::resource('systemInformation', SystemInformationController::class);
 
 
+    Route::get('ajax-customers', [CustomerController::class, 'data'])->name('ajax.customer.data');
     Route::resource('customer', CustomerController::class);
 
     Route::resource('service', ServiceController::class);

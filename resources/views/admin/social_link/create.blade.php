@@ -76,16 +76,13 @@ Create Social Link | {{ $ins_name ?? 'Your App Name' }}
 
 @section('body')
 
-<div class="dashboard-body container">
+<main class="main-content">
+    <div class="container-fluid">
 
     <div class="mb-4 d-flex justify-content-between align-items-center">
         <!-- Breadcrumb Start -->
         <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="{{route('home')}}">Home</a></li>
-                <li class="breadcrumb-item"><a href="{{route('socialLink.index')}}">Social Link Management</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Add New</li>
-            </ol>
+            
         </nav>
         <!-- Breadcrumb End -->
 
@@ -140,7 +137,7 @@ Create Social Link | {{ $ins_name ?? 'Your App Name' }}
         </div>
     </div>
 </div>
-
+</main>
 @endsection
 
 @section('script')

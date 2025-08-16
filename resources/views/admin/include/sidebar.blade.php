@@ -16,6 +16,9 @@
                 </li>
                 @endif
                 </li>
+                <li class="sidebar-title">
+                    <span>Order & Product</span>
+                </li>
                 <li class="nav-item">
                      <a class="nav-link" href="#ordersSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="ordersSubmenu">
                         <i data-feather="shopping-bag"></i>
@@ -113,17 +116,17 @@
                     </ul>
                 </li>
                 @endif
-               
+               @if ($usr->can('customerAdd') || $usr->can('customerView') ||  $usr->can('customerDelete') ||  $usr->can('customerUpdate'))
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link {{ Route::is('customer.index') || Route::is('customer.edit') || Route::is('customer.create') ? 'active' : '' }}" href="{{ route('customer.index') }}">
                         <i data-feather="users"></i>
                         <span>Customers</span>
                     </a>
                 </li>
-
+@endif
                     @if ($usr->can('offerDetailAdd') || $usr->can('offerDetailView') ||  $usr->can('offerDetailDelete') || $usr->can('offerDetailUpdate') || $usr->can('bundleofferAdd') || $usr->can('bundleofferView') ||  $usr->can('bundleofferDelete') ||  $usr->can('bundleofferUpdate'))
                 <li class="sidebar-title">
-                    <span>Offer</span>
+                    <span>Offer & Coupon</span>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#offerSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="offerSubmenu">
@@ -132,21 +135,25 @@
                         <i data-feather="chevron-down" class="ms-auto"></i>
                     </a>
                     <ul class="collapse list-unstyled {{Route::is('offer-product.create') || Route::is('offer-product.edit') || Route::is('offer-product.index') || Route::is('offer-product.show') || Route::is('bundle-offer.show') || Route::is('bundle-offer.create') || Route::is('bundle-offer.edit') || Route::is('bundle-offer.index')  ? 'show' : '' }}" id="offerSubmenu" data-bs-parent="#sidebar-menu">
+                                           @if ( $usr->can('bundleofferAdd') || $usr->can('bundleofferView') ||  $usr->can('bundleofferDelete') ||  $usr->can('bundleofferUpdate'))
                         <li><a class="nav-link {{ Route::is('bundle-offer.show') || Route::is('bundle-offer.create') || Route::is('bundle-offer.edit') || Route::is('bundle-offer.index')  ? 'active' : '' }}" href="{{route('bundle-offer.index')}}">Offer Name</a></li>
+                        @endif
+                                            @if ($usr->can('offerDetailAdd') || $usr->can('offerDetailView') ||  $usr->can('offerDetailDelete') || $usr->can('offerDetailUpdate'))
                          <li><a class="nav-link {{Route::is('offer-product.index') || Route::is('offer-product.edit') || Route::is('offer-product.create') || Route::is('offer-product.show')   ? 'active' : '' }}" href="{{route('offer-product.index')}}">Offer Product</a></li>
+                         @endif
                     </ul>
                 </li>
                 @endif
                 <li class="nav-item">
                     <a class="nav-link" href="#">
                         <i data-feather="bar-chart-2"></i>
-                        <span>Analytics</span>
+                        <span>Coupons</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">
                         <i data-feather="percent"></i>
-                        <span>Promotions</span>
+                        <span>Reward Point</span>
                     </a>
                 </li>
 
@@ -197,6 +204,47 @@
                         <li><a class="nav-link" href="#">Customer Report</a></li>
                     </ul>
                 </li>
+
+                <li class="sidebar-title">
+                    <span>Website Content</span>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#contentSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="contentSubmenu">
+                        <i data-feather="file-text"></i>
+                        <span>Content</span>
+                        <i data-feather="chevron-down" class="ms-auto"></i>
+                    </a>
+                    <ul class="collapse list-unstyled {{Route::is('extraPage.index') ||  Route::is('message.index') ||  Route::is('aboutUs.index') ||  Route::is('socialLink.index')  ? 'show' : '' }}" id="contentSubmenu" data-bs-parent="#sidebar-menu">
+                      
+                          @if ($usr->can('socialLinkAdd') || $usr->can('socialLinkView') ||  $usr->can('socialLinkDelete') ||  $usr->can('socialLinkUpdate'))
+                    <li>
+                        <a class="nav-link {{ Route::is('socialLink.index') || Route::is('socialLink.edit') || Route::is('socialLink.create') ? 'active' : '' }}" href="{{ route('socialLink.index') }}">Social Link</a>
+                    </li>
+                    @endif
+
+ 
+                    @if ($usr->can('extraPageAdd') || $usr->can('extraPageView') ||  $usr->can('extraPageDelete') ||  $usr->can('extraPageUpdate'))
+                    <li >
+                        <a class="nav-link {{ Route::is('extraPage.index') || Route::is('extraPage.edit') || Route::is('extraPage.create') ? 'active' : '' }}" href="{{ route('extraPage.index') }}">Extra Page</a>
+                    </li>
+                    @endif
+
+                        @if ($usr->can('messageAdd') || $usr->can('messageView') ||  $usr->can('messageDelete') ||  $usr->can('messageUpdate'))
+                    <li >
+                        <a class="nav-link {{ Route::is('message.index') || Route::is('message.edit') || Route::is('message.create') ? 'active' : '' }}" href="{{ route('message.index') }}">Message</a>
+                    </li>
+                    @endif
+
+                    @if ($usr->can('aboutUsAdd') || $usr->can('aboutUsView') ||  $usr->can('aboutUsDelete') ||  $usr->can('aboutUsUpdate'))
+                    <li>
+                        <a class="nav-link {{ Route::is('aboutUs.index') || Route::is('aboutUs.edit') || Route::is('aboutUs.create') ? 'active' : '' }}" href="{{ route('aboutUs.index') }}">About Us</a>
+                    </li>
+                    @endif
+                    </ul>
+                </li>
+
+
                  @if ($usr->can('sliderSectionView') || $usr->can('offerSectionControlView') || $usr->can('sideBarView') || $usr->can('headerAdd') || $usr->can('headerView') ||  $usr->can('headerDelete') ||  $usr->can('headerUpdate'))
                 <li class="sidebar-title">
                     <span>CMS</span>
@@ -208,10 +256,18 @@
                         <i data-feather="chevron-down" class="ms-auto"></i>
                     </a>
                     <ul class="collapse list-unstyled {{Route::is('offer-section.control.index') ||  Route::is('slider.control.index') ||  Route::is('sidebar-menu.control.index') ||  Route::is('frontend.control.index')  ? 'show' : '' }}" id="cmsSubmenu" data-bs-parent="#sidebar-menu">
+                                         @if ($usr->can('headerAdd') || $usr->can('headerView') ||  $usr->can('headerDelete') ||  $usr->can('headerUpdate'))
                         <li><a class="nav-link {{ Route::is('frontend.control.index')  ? 'active' : '' }}" href="{{route('frontend.control.index')}}"> Header</a></li>
+                        @endif
+                        @if ($usr->can('sidebarMenuView'))
                          <li><a class="nav-link {{ Route::is('sidebar-menu.control.index')  ? 'active' : '' }}" href="{{route('sidebar-menu.control.index')}}">Side Bar</a></li>
+                          @endif
+                          @if ($usr->can('offerSectionControlView'))
                           <li><a class="nav-link {{ Route::is('offer-section.control.index')  ? 'active' : '' }}" href="{{route('offer-section.control.index')}}">Offer Section</a></li>
+                          @endif
+                          @if ($usr->can('sliderSectionView'))
                           <li><a class="nav-link {{ Route::is('slider.control.index')  ? 'active' : '' }}" href="{{route('slider.control.index')}}">Slider Section</a></li>
+                          @endif
                     </ul>
                 </li>
                 @endif

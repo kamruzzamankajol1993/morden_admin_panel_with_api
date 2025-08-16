@@ -59,23 +59,31 @@ class ProductController extends Controller
     }
 
 
-    public function index()
+     public function index()
     {
-
-
+        // Pass both sizes (for the modal) and categories (for the new filter)
         $sizes = Size::all()->keyBy('id');
-        return view('admin.product.index', compact('sizes'));
+        $categories = Category::where('status', 1)->orderBy('name')->get(); // MODIFIED: Get categories for the filter
+        return view('admin.product.index', compact('sizes', 'categories')); // MODIFIED: Pass categories to the view
     }
 
     public function data(Request $request)
     {
-        // Eager load variants and their color relationship for the stock list
         $query = Product::with(['category', 'variants.color']);
 
-        if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhereHas('category', fn($q) => $q->where('name', 'like', '%' . $request->search . '%'));
+        // --- NEW: Advanced Filtering Logic ---
+        if ($request->filled('product_name')) {
+            $query->where('name', 'like', '%' . $request->product_name . '%');
         }
+
+        if ($request->filled('product_code')) {
+            $query->where('product_code', 'like', '%' . $request->product_code . '%');
+        }
+
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+        // --- END: Advanced Filtering Logic ---
 
         $sort = $request->get('sort', 'id');
         $direction = $request->get('direction', 'desc');

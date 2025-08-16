@@ -1,460 +1,178 @@
 @extends('admin.master.master')
-
-@section('title')
-
-Customer Management | {{ $ins_name }}
-
-@endsection
-
-
+@section('title', 'Customer List')
 @section('css')
 <style>
-
-    .table-bordered {
-    border: 1px solid #ccc;
-    border-collapse: collapse;
-}
-
-.table-bordered th,
-.table-bordered td {
-    border: 1px solid #ccc;
-    padding: 8px 12px;
-    text-align: left;
-}
-    </style>
-<style>
-      
-        /* Pagination Styling */
-        .pagination-container {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            margin-top: 1.5rem;
-        }
-        .pagination-container .page-item {
-            margin: 0 0.25rem;
-        }
-        .pagination-container .page-link {
-            border-radius: 0; /* Removed roundness */
-            color: #4f46e5; /* Primary color */
-            border-color: #e0e0e0;
-            transition: all 0.2s ease-in-out;
-            box-shadow: none; /* Removed shadow */
-            padding: 0.5rem 0.75rem; /* Adjust padding */
-        }
-        .pagination-container .page-link:hover {
-            background-color: #e0e0e0;
-            border-color: #e0e0e0;
-            box-shadow: none; /* Removed shadow */
-        }
-        .pagination-container .page-item.active .page-link {
-            background-color: #4f46e5; /* Primary color */
-            border-color: #4f46e5;
-            color: #fff;
-            font-weight: 600; /* Bolder active link */
-            box-shadow: none; /* Removed shadow */
-        }
-        .pagination-container .page-item.disabled .page-link {
-            color: #b0b0b0;
-            pointer-events: none;
-            background-color: #f8f9fa;
-            border-color: #e0e0e0;
-            box-shadow: none;
-        }
-
-   
-
-
-    /* Image thumbnails in table */
-    .table img.square-img { /* New class for square images */
-        border-radius: 0; /* Removed roundness */
-        border: 2px solid #ddd;
-        box-shadow: none; /* Removed shadow */
+    .loader-row {
+        text-align: center;
     }
-
-   
-
-    /* Breadcrumb styling adjustments */
-    .breadcrumb-with-buttons {
-        margin-bottom: 24px;
-        justify-content: space-between;
-        align-items: center;
+    .spinner-border-sm {
+        width: 1.5rem;
+        height: 1.5rem;
+        border-width: .2em;
     }
-
-    .breadcrumb {
-        margin-bottom: 0 !important;
-    }
-    .breadcrumb li a, .breadcrumb li span {
-        font-size: 15px;
-    }
-    .breadcrumb li .ph-caret-right {
-        color: #adb5bd;
-    }
-    .text-main-600 {
-        color: #4f46e5;
-        font-weight: 600;
-    }
-    .hover-text-main-600:hover {
-        color: #4f46e5;
-    }
-
-    /* Card styling */
-    .card {
-        border: none;
-        border-radius: 0; /* Removed roundness */
-        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
-        transition: all 0.3s ease-in-out;
-    }
-    .card:hover {
-        box-shadow: 0 0.75rem 1.5rem rgba(0,0,0,0.15);
-    }
-    .card-header {
-        background-color: #4f46e5;
-        color: #fff;
-        padding: 1rem 1.5rem;
-        border-top-left-radius: 0; /* Removed roundness */
-        border-top-right-radius: 0; /* Removed roundness */
-        font-weight: 600;
-    }
-
-    /* Input group and select styling */
-    .input-group .form-control,
-    .input-group .btn {
-        border-color: #ced4da;
-        box-shadow: none !important;
-        border-radius: 0 !important; /* Removed roundness */
-    }
-    .input-group .form-control:focus,
-    .input-group .btn:focus {
-        border-color: #80bdff;
-        box-shadow: 0 0 0 0.25rem rgba(0,123,255,.25) !important;
-    }
-    /* Specific rounded-start/end removed as overall input-group rules apply */
-
-    .flex-align {
-        display: flex;
-        align-items: center;
-    }
-   
-    .text-13 { font-size: 0.8125rem; }
-    .text-15 { font-size: 0.9375rem; }
-    .text-lg { font-size: 1.125rem; }
-
 </style>
-
 @endsection
-
-
 @section('body')
-
-<div class="dashboard-body">
-
-    <div class="breadcrumb-with-buttons mb-4 flex-between flex-wrap gap-8">
-        <!-- Breadcrumb Start -->
-        <div class="breadcrumb mb-0">
-            <ul class="flex-align gap-4">
-                <li><a href="{{route('home')}}" class="text-secondary fw-normal text-15 hover-text-main-600">Home</a></li>
-                <li> <span class="text-gray-500 fw-normal d-flex"><i class="ph ph-caret-right"></i></span> </li>
-                <li><span class="text-main-600 fw-normal text-15">Customer Management</span></li>
-            </ul>
-        </div>
-        <!-- Breadcrumb End -->
-
-        <!-- Breadcrumb Right Start -->
-        <div class="flex-align gap-8 flex-wrap">
-            <div class="flex-align text-gray-500 text-13 border border-gray-100 rounded-0 ps-20 focus-border-main-600 bg-white"> {{-- Removed rounded-4 --}}
-                <span class="text-lg"><i class="ph ph-layout"></i></span>
-                <select class="form-control ps-8 pe-20 py-16 border-0 text-inherit rounded-0 text-center" id="exportFilter"> {{-- Removed rounded-4 --}}
-                    <option value="" selected disabled>Export</option>
-                    <option value="excel">Excel</option>
-                    <option value="pdf">Pdf</option>
-                </select>
-            </div>
-
-            <div class="flex-align text-gray-500 text-13">
-                @if (Auth::user()->can('customerAdd'))
-                    <a href="{{ route('customer.create') }}" type="button" class="btn btn-primary "> {{-- Changed rounded-pill to square-corners --}}
-                        <i class="fas fa-plus me-2"></i> Add New Customer
-                    </a>
-                @endif
+<main class="main-content">
+    <div class="container-fluid">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+            <h2 class="mb-0">Customer List</h2>
+            <div class="d-flex align-items-center">
+                <form class="d-flex me-2" role="search">
+                    <input class="form-control" id="searchInput" type="search" placeholder="Search customers..." aria-label="Search">
+                </form>
+                <a href="{{ route('customer.create') }}" class="btn btn-primary">Add New Customer</a>
             </div>
         </div>
-        <!-- Breadcrumb Right End -->
-    </div>
-
-
-    <div class="card overflow-hidden shadow-lg rounded-3"> {{-- Changed rounded-3 to rounded-0 --}}
-        <div class="card-body">
-            @include('flash_message')
-
-            {{-- Search input moved here --}}
-            <div class="d-flex justify-content-end mb-4">
-                <div class="input-group" style="width: 300px;">
-                    <input type="text" id="customerSearch" class="form-control rounded-0" placeholder="Search customer..."> {{-- Changed rounded-start to rounded-0 --}}
-                    {{-- Search button removed --}}
+        <div class="card">
+            <div class="card-body">
+                @include('flash_message')
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Sl</th>
+                                <th class="sortable" data-column="name">Name</th>
+                                <th>Contact</th>
+                                <th>Address</th>
+                                <th>Total Buy</th>
+                                <th class="sortable" data-column="type">Type</th>
+                                <th class="sortable" data-column="status">Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            {{-- Loader row will be shown here initially --}}
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            <!-- add table here start --->
-            <div class="table-responsive">
-                <table class="table table-hover  table-bordered align-middle">
-                    <thead class="table-primary">
-                        <tr>
-                            <th scope="col">S.No.</th> {{-- Added Serial Number column --}}
-                            <th scope="col">Image</th>
-                            <th scope="col" class="sortable" data-sort="name">Name <i class="fas fa-sort float-end"></i></th>
-                            <th scope="col" class="sortable" data-sort="phone">Phone <i class="fas fa-sort float-end"></i></th>
-                            <th scope="col" class="sortable" data-sort="email">Email Address <i class="fas fa-sort float-end"></i></th>
-                            <th scope="col">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="customerTableBody">
-                        {{-- Customer data will be loaded here by JavaScript --}}
-                    </tbody>
-                </table>
-            </div>
-            <!-- add table here end --->
-
-            {{-- Pagination Controls --}}
-            <div class="pagination-container">
-                <ul class="pagination mb-0" id="paginationControls">
-                    {{-- Pagination links will be generated here by JavaScript --}}
-                </ul>
+            <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+                <div class="text-muted"></div>
+                <nav>
+                    <ul class="pagination justify-content-center" id="pagination"></ul>
+                </nav>
             </div>
         </div>
     </div>
-</div>
-
+</main>
 @endsection
-
 @section('script')
-
-
 <script>
-    $(document).ready(function() {
-        let currentPage = 1;
-        const rowsPerPage = 10; // This should match the default perPage in your controller
-        let currentSearchTerm = '';
-        let currentSortBy = 'id'; // Default sort column
-        let currentSortOrder = 'desc'; // Default sort order
+$(document).ready(function() {
+    var currentPage = 1, searchTerm = '', sortColumn = 'id', sortDirection = 'desc';
 
-      
-        const customerIndexUrl = @json(route('customer.index')); // Route to fetch all customers
-        const customerShowUrlPattern = @json(route('customer.show', ['customer' => ':id']));
-        const customerEditUrlPattern = @json(route('customer.edit', ['customer' => ':id']));
-        const customerDeleteUrlPattern = @json(route('customer.destroy', ['customer' => ':id']));
-        const customerExportUrl = @json(route('customer.export')); // New export route
+    var routes = {
+        fetch: "{{ route('ajax.customer.data') }}",
+        destroy: id => `{{ url('customer') }}/${id}`,
+        csrf: "{{ csrf_token() }}"
+    };
 
-        // Function to load customer data from the controller via AJAX
-        function loadCustomerData() {
-            const params = {
-                page: currentPage,
-                per_page: rowsPerPage,
-                search: currentSearchTerm,
-                // You can uncomment and use these if you implement server-side sorting as well
-                // sort_by: currentSortBy,
-                // sort_order: currentSortOrder
-            };
+    const loaderRow = `
+        <tr class="loader-row">
+            <td colspan="8">
+                <div class="spinner-border spinner-border-sm text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </td>
+        </tr>
+    `;
 
-            $.ajax({
-                url: customerIndexUrl, // Your customers.index route
-                type: 'GET',
-                data: params,
-                dataType: 'json',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest' // Laravel detects AJAX with this header
-                },
-                success: function(response) {
-                    console.log("Customers data loaded:", response);
-                    // Update current page, total, and last page from server response
-                    currentPage = response.current_page;
-                    const totalPages = response.last_page;
+    function fetchData() {
+        $('#tableBody').html(loaderRow); // Show loader before fetching
 
-                    renderTable(response.data); // Pass only the current page's data
-                    renderPagination(totalPages); // Pass total pages for pagination controls
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error loading customer data:", status, error, xhr.responseText);
-                    $('#customerTableBody').html(`<tr><td colspan="6" class="text-center text-danger">Failed to load customer data. Please try again.</td></tr>`);
-                    // Changed colspan to 6 because we added S.No. column
-                }
-            });
-        }
+        $.get(routes.fetch, {
+            page: currentPage, search: searchTerm, sort: sortColumn, direction: sortDirection
+        }, function (res) {
+            let rows = '';
+            if (res.data.length === 0) {
+                rows = '<tr><td colspan="8" class="text-center">No customers found.</td></tr>';
+            } else {
+                res.data.forEach((customer, i) => {
+                    const statusBadge = customer.status == 1 ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Inactive</span>';
+                    const showUrl = `{{ url('customer') }}/${customer.id}`;
+                    const editUrl = `{{ url('customer') }}/${customer.id}/edit`;
+                    const typeText = customer.type.charAt(0).toUpperCase() + customer.type.slice(1);
 
-        // Function to render table rows
-        function renderTable(customers) {
-            const $tableBody = $('#customerTableBody');
-            $tableBody.empty(); // Clear existing rows
+                    let contactHtml = `<div>${customer.phone}</div>`;
+                    if (customer.email) {
+                        contactHtml += `<small class="text-muted">${customer.email}</small>`;
+                    }
 
-            if (customers.length === 0) {
-                $tableBody.append(`<tr><td colspan="6" class="text-center">No customers found.</td></tr>`);
-                // Changed colspan to 6 because we added S.No. column
-                return;
-            }
+                    let addressHtml = customer.address || 'N/A';
+                    if (!customer.address && Array.isArray(customer.addresses) && customer.addresses.length > 0) {
+                        addressHtml = customer.addresses[0].address;
+                    }
 
-            let serialNumber = (currentPage - 1) * rowsPerPage + 1; // Initialize serial number
+                    // Format the total buy amount
+                    const totalBuy = customer.orders_sum_total_amount ? parseFloat(customer.orders_sum_total_amount).toFixed(2) : '0.00';
 
-            customers.forEach(customer => {
-                // Construct URLs using the patterns
-                const showUrl = customerShowUrlPattern.replace(':id', customer.id);
-                const editUrl = customerEditUrlPattern.replace(':id', customer.id);
-                const deleteUrl = customerDeleteUrlPattern.replace(':id', customer.id);
-
-                // Ensure image path is correctly asset()'d if stored as relative path
-                const customerImage = customer.image ? `{{asset('/')}}public/${customer.image}` : 'https://placehold.co/50x50/DDDDDD/333333?text=IMG';
-
-
-                const row = `
-                    <tr>
-                        <td>${serialNumber++}</td> {{-- Display and increment serial number --}}
-                        <td><img src="${customerImage}" alt="${customer.name}" class="square-img" style="width: 50px; height: 50px; object-fit: cover;"></td> {{-- Changed rounded-circle to square-img --}}
+                    rows += `<tr>
+                        <td>${(res.current_page - 1) * 10 + i + 1}</td>
                         <td>${customer.name}</td>
-                        <td>${customer.phone || 'N/A'}</td>
-                        <td>${customer.email}</td>
+                        <td>${contactHtml}</td>
+                        <td>${addressHtml}</td>
+                        <td>৳${totalBuy}</td>
+                        <td>${typeText}</td>
+                        <td>${statusBadge}</td>
                         <td>
-                            <a href="${showUrl}" class="btn btn-info btn-sm  btn-custom-sm" title="View Details"><i class="fas fa-eye"></i></a> {{-- Changed rounded-pill to square-corners --}}
-                            <a href="${editUrl}" class="btn btn-warning btn-sm  btn-custom-sm" title="Edit"><i class="fas fa-edit"></i></a> {{-- Changed rounded-pill to square-corners --}}
-                            <button type="button" class="btn btn-danger btn-sm btn-custom-sm delete-btn" data-id="${customer.id}" data-delete-url="${deleteUrl}" title="Delete"><i class="fas fa-trash"></i></button> {{-- Changed rounded-pill to square-corners --}}
+                            <a href="${showUrl}" class="btn btn-sm btn-primary"><i class="fa fa-eye"></i></a>
+                            <a href="${editUrl}" class="btn btn-sm btn-info"><i class="fa fa-edit"></i></a>
+                            <button class="btn btn-sm btn-danger btn-delete" data-id="${customer.id}"><i class="fa fa-trash"></i></button>
                         </td>
-                    </tr>
-                `;
-                $tableBody.append(row);
-            });
-        }
-
-        // Function to render pagination controls based on server response
-        function renderPagination(totalPages) {
-            const $paginationControls = $('#paginationControls');
-            $paginationControls.empty();
-
-            if (totalPages <= 1) {
-                return; // Hide pagination if only one page
+                    </tr>`;
+                });
             }
+            $('#tableBody').html(rows); // Replace loader with data
 
-            // Previous button
-            $paginationControls.append(`
-                <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-                    <a class="page-link" href="#" data-page="${currentPage - 1}">Previous</a>
-                </li>
-            `);
-
-            // Page numbers
-            for (let i = 1; i <= totalPages; i++) {
-                $paginationControls.append(`
-                    <li class="page-item ${currentPage === i ? 'active' : ''}">
-                        <a class="page-link" href="#" data-page="${i}">${i}</a>
-                    </li>
-                `);
-            }
-
-            // Next button
-            $paginationControls.append(`
-                <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-                    <a class="page-link" href="#" data-page="${currentPage + 1}">Next</a>
-                </li>
-            `);
-
-            // Add click handler for pagination links
-            $paginationControls.off('click', '.page-link').on('click', '.page-link', function(e) {
-                e.preventDefault();
-                const page = parseInt($(this).data('page'));
-                if (page > 0 && page <= totalPages && page !== currentPage) {
-                    currentPage = page;
-                    loadCustomerData(); // Load data for the new page
+            let paginationHtml = '';
+            if (res.last_page > 1) {
+                 paginationHtml += `<li class="page-item ${res.current_page === 1 ? 'disabled' : ''}"><a class="page-link" href="#" data-page="1">First</a></li>`;
+                paginationHtml += `<li class="page-item ${res.current_page === 1 ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${res.current_page - 1}">Prev</a></li>`;
+                const startPage = Math.max(1, res.current_page - 2);
+                const endPage = Math.min(res.last_page, res.current_page + 2);
+                for (let i = startPage; i <= endPage; i++) {
+                    paginationHtml += `<li class="page-item ${i === res.current_page ? 'active' : ''}"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
                 }
-            });
-        }
-
-        // Search functionality
-        let searchTimeout;
-        $('#customerSearch').on('keyup', function() {
-            const searchTerm = $(this).val().toLowerCase();
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                currentSearchTerm = searchTerm;
-                currentPage = 1; // Reset to first page on new search
-                loadCustomerData(); // Trigger server-side search
-            }, 300); // Debounce search input
-        });
-
-        // Sorting functionality (server-side sorting)
-        $('th.sortable').on('click', function() {
-            const sortBy = $(this).data('sort');
-            const currentOrder = $(this).data('sort-order');
-            const newSortOrder = (currentOrder === 'asc' || !currentOrder) ? 'desc' : 'asc';
-
-            // Update global sort parameters
-            currentSortBy = sortBy;
-            currentSortOrder = newSortOrder;
-
-            // Reset icons for all sortable columns
-            $('th.sortable i').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
-
-            // Update icon for the clicked column
-            $(this).find('i').removeClass('fa-sort').addClass(newSortOrder === 'asc' ? 'fa-sort-up' : 'fa-sort-down');
-            $(this).data('sort-order', newSortOrder); // Store new sort order
-
-            currentPage = 1; // Reset to first page on new sort
-            loadCustomerData(); // Reload data with new sort parameters
-        });
-
-
-        // Delete functionality with SweetAlert
-        $(document).on('click', '.delete-btn', function() {
-            const customerId = $(this).data('id');
-            const deleteUrl = $(this).data('delete-url');
-            const customerName = $(this).closest('tr').find('td:nth-child(3)').text(); // Changed index to 3 for name
-
-            Swal.fire({
-                title: 'Are you sure?',
-                text: `You are about to delete customer "${customerName}". This action cannot be undone!`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: deleteUrl,
-                        type: 'POST',
-                        data: {
-                            _method: 'DELETE',
-                            _token: '{{ csrf_token() }}'
-                        },
-                        success: function(response) {
-                            Swal.fire(
-                                'Deleted!',
-                                'Customer has been deleted.',
-                                'success'
-                            ).then(() => {
-                                // Reload data from the server after deletion
-                                loadCustomerData();
-                            });
-                        },
-                        error: function(xhr) {
-                            console.error("Error deleting customer:", xhr.responseText);
-                            Swal.fire(
-                                'Error!',
-                                'There was an error deleting the customer.',
-                                'error'
-                            );
-                        }
-                    });
-                }
-            });
-        });
-
-        // Export functionality
-        $('#exportFilter').on('change', function() {
-            const exportType = $(this).val();
-            if (exportType) {
-                window.location.href = `${customerExportUrl}?type=${exportType}`;
-                $(this).val('');
+                paginationHtml += `<li class="page-item ${res.current_page === res.last_page ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${res.current_page + 1}">Next</a></li>`;
+                paginationHtml += `<li class="page-item ${res.current_page === res.last_page ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${res.last_page}">Last</a></li>`;
             }
+            $('#pagination').html(paginationHtml);
         });
+    }
 
-        // Initial load of data from backend
-        loadCustomerData();
+    $('#searchInput').on('keyup', function () { searchTerm = $(this).val(); currentPage = 1; fetchData(); });
+    $(document).on('click', '.sortable', function () {
+        let col = $(this).data('column');
+        sortDirection = sortColumn === col ? (sortDirection === 'asc' ? 'desc' : 'asc') : 'asc';
+        sortColumn = col; fetchData();
     });
+    $(document).on('click', '.page-link', function (e) { e.preventDefault(); currentPage = $(this).data('page'); fetchData(); });
+
+    $(document).on('click', '.btn-delete', function () {
+        const id = $(this).data('id');
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: routes.destroy(id),
+                    method: 'DELETE',
+                    data: { _token: routes.csrf },
+                    success: function() {
+                        Swal.fire('Deleted!', 'The customer has been deleted.', 'success');
+                        fetchData();
+                    }
+                });
+            }
+        });
+    });
+
+    fetchData();
+});
 </script>
 @endsection
