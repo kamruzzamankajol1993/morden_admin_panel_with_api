@@ -15,22 +15,27 @@
                     </a>
                 </li>
                 @endif
-                </li>
+                
                 <li class="sidebar-title">
-                    <span>Order & Product</span>
+                    <span>Invoice & Product</span>
                 </li>
+                @if($usr->can('invoiceView') || $usr->can('invoiceAdd') || $usr->can('invoiceDelete') || $usr->can('invoiceUpdate'))
                 <li class="nav-item">
                      <a class="nav-link" href="#ordersSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="ordersSubmenu">
                         <i data-feather="shopping-bag"></i>
-                        <span>Orders</span>
+                        <span>Invoice</span>
                         <i data-feather="chevron-down" class="ms-auto"></i>
                     </a>
-                    <ul class="collapse list-unstyled" id="ordersSubmenu" data-bs-parent="#sidebar-menu">
-                        <li><a class="nav-link" href="#">All Orders</a></li>
-                        <li><a class="nav-link" href="#">Pending</a></li>
-                        <li><a class="nav-link" href="#">Shipped</a></li>
+                    <ul class="collapse list-unstyled {{Route::is('order.create') || Route::is('order.edit') || Route::is('order.index') || Route::is('order.show') ? 'show' : ''}}" id="ordersSubmenu" data-bs-parent="#sidebar-menu">
+                          @if($usr->can('invoiceAdd'))
+                        <li><a class="nav-link {{Route::is('order.create') ? 'active' : ''}}" href="{{route('order.create')}}">Create Invoice</a></li>
+                        @endif
+                        @if($usr->can('invoiceView') || $usr->can('invoiceDelete') || $usr->can('invoiceUpdate'))  
+                        <li><a class="nav-link {{Route::is('order.edit') || Route::is('order.index') || Route::is('order.show') ? 'active' : ''}}" href="{{route('order.index')}}">Invoice List</a></li>
+                        @endif
                     </ul>
                 </li>
+                @endif
                   @if ($usr->can('animationCategoryAdd') || $usr->can('animationCategoryView') ||  $usr->can('animationCategoryDelete') ||  $usr->can('animationCategoryUpdate') || $usr->can('brandAdd') || $usr->can('brandView') ||  $usr->can('brandDelete') ||  $usr->can('brandUpdate') || $usr->can('categoryAdd') || $usr->can('categoryView') ||  $usr->can('categoryDelete') ||  $usr->can('categoryUpdate') || $usr->can('productAdd') || $usr->can('productView') ||  $usr->can('productDelete') ||  $usr->can('productUpdate'))
                 <li class="nav-item">
                     <a class="nav-link" href="#productsSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="productsSubmenu">
@@ -144,18 +149,33 @@
                     </ul>
                 </li>
                 @endif
+                    @if ($usr->can('couponAdd') || $usr->can('couponView') ||  $usr->can('couponDelete') ||  $usr->can('couponUpdate'))
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link {{ Route::is('coupon.index') || Route::is('coupon.edit') || Route::is('coupon.create') ? 'active' : '' }}" href="{{ route('coupon.index') }}">
                         <i data-feather="bar-chart-2"></i>
                         <span>Coupons</span>
                     </a>
                 </li>
+                @endif
+                 {{-- UPDATED REWARD POINT MENU --}}
+                 @if ($usr->can('rewardPointView'))
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i data-feather="percent"></i>
+                    <a class="nav-link" href="#rewardSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="rewardSubmenu">
+                        <i data-feather="gift"></i>
                         <span>Reward Point</span>
+                        <i data-feather="chevron-down" class="ms-auto"></i>
                     </a>
+                    <ul class="collapse list-unstyled {{ Route::is('reward.settings') || Route::is('reward.history') || Route::is('reward.customer.history') ? 'show' : '' }}" id="rewardSubmenu" data-bs-parent="#sidebar-menu">
+                        {{-- You can add permission checks here later if you want --}}
+                         @if ($usr->can('rewardPointView'))
+                        <li><a class="nav-link {{ Route::is('reward.settings') ? 'active' : '' }}" href="{{ route('reward.settings') }}">Settings</a></li>
+                        @endif
+                        @if ($usr->can('rewardPointView'))
+                        <li><a class="nav-link {{ Route::is('reward.history') || Route::is('reward.customer.history') ? 'active' : '' }}" href="{{ route('reward.history') }}">History</a></li>
+                        @endif
+                    </ul>
                 </li>
+                @endif
 
                 <li class="sidebar-title">
                     <span>Inventory & Purchase</span>

@@ -18,6 +18,9 @@ class OrderDetail extends Model
         'quantity',
         'unit_price',
         'subtotal',
+        'discount', // Add this
+        'after_discount_price',
+        'delivery_status'
     ];
 
     /**

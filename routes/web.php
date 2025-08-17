@@ -52,6 +52,7 @@ use App\Http\Controllers\Admin\OfferDetailController;
 use App\Http\Controllers\Admin\SidebarMenuController;
 use App\Http\Controllers\Admin\OfferSectionController;
 use App\Http\Controllers\Admin\SliderControlController;
+use App\Http\Controllers\Admin\OrderController;
 
 
 // Route::get('/', function () {
@@ -113,6 +114,32 @@ Route::controller(AuthController::class)->group(function () {
 
 Route::group(['middleware' => ['auth']], function() {
 
+    Route::prefix('reward-points')->name('reward.')->group(function () {
+        Route::get('data', [App\Http\Controllers\Admin\RewardPointController::class, 'data'])->name('data');
+    Route::get('settings', [App\Http\Controllers\Admin\RewardPointController::class, 'settings'])->name('settings');
+    Route::post('settings', [App\Http\Controllers\Admin\RewardPointController::class, 'updateSettings'])->name('settings.update');
+    Route::get('history', [App\Http\Controllers\Admin\RewardPointController::class, 'history'])->name('history');
+    Route::get('history/{customer}', [App\Http\Controllers\Admin\RewardPointController::class, 'customerHistory'])->name('customer.history');
+});
+
+    // Add this to your admin route group
+
+    Route::post('order-payment/{order}', [OrderController::class, 'storePayment'])->name('order.payment.store');
+Route::get('order-print-a4/{order}', [OrderController::class, 'printA4'])->name('order.print.a4');
+Route::get('order-print-pos/{order}', [OrderController::class, 'printPOS'])->name('order.print.pos');
+
+
+Route::get('order-search-customers', [OrderController::class, 'searchCustomers'])->name('order.search-customers');
+
+       Route::get('ajax_orders', [OrderController::class, 'data'])->name('ajax.order.data');
+        Route::post('storeorder-update-status/{order}', [OrderController::class, 'updateStatus'])->name('order.update-status');
+    Route::get('orderstore_details/{id}', [OrderController::class, 'getDetails'])->name('order.get-details');
+    Route::delete('orders-destroy-multiple', [OrderController::class, 'destroyMultiple'])->name('order.destroy-multiple');
+    Route::resource('order', OrderController::class);
+
+     Route::get('order-get-customer-details/{id}', [OrderController::class, 'getCustomerDetails'])->name('order.get-customer-details');
+    Route::get('order-search-products', [OrderController::class, 'searchProducts'])->name('order.search-products');
+ Route::get('order-get-product-details/{id}', [OrderController::class, 'getProductDetails'])->name('order.get-product-details'); // Add this
     Route::get('slider-control', [SliderControlController::class, 'index'])->name('slider.control.index');
     Route::post('slider-control', [SliderControlController::class, 'update'])->name('slider.control.update');
     Route::get('slider-control/search', [SliderControlController::class, 'searchProducts'])->name('slider.control.search');
@@ -195,7 +222,7 @@ Route::resource('unit', UnitController::class);
 Route::get('ajax_animation_category', [AnimationCategoryController::class, 'data'])->name('ajax.animation_category.data');
 Route::resource('animationCategory', AnimationCategoryController::class);
 Route::resource('coupon', CouponController::class);
-
+Route::get('ajax-coupons', [CouponController::class, 'data'])->name('ajax.coupons.data');
 Route::post('/coupons/apply', [CouponController::class, 'applyCoupon'])->name('coupons.apply');
 
     Route::controller(AuthController::class)->group(function () {

@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('phone')->unique();
             $table->string('password')->nullable();
             $table->text('address')->nullable();
+            $table->integer('reward_points')->default(0);
+
             $table->string('old_customer_id')->nullable();
             $table->string('slug')->nullable();
             $table->string('user_id')->nullable();

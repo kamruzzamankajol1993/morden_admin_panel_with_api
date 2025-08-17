@@ -3,170 +3,113 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Coupon;
+use App\Models\Product;
+use App\Models\Category;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
 class CouponController extends Controller
 {
-    
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Display the coupon management page.
      */
     public function index()
     {
-        // Retrieve all coupons from the database, latest first
-        $coupons = Coupon::latest()->paginate(10);
-        // Return the view with the list of coupons
-        return view('admin.coupons.index', compact('coupons'));
+        // Pass products and categories to the view for use in the modals.
+        $products = Product::where('status', 1)->get(['id', 'name']);
+        $categories = Category::where('status', 1)->get(['id', 'name']);
+        return view('admin.coupon.index', compact('products', 'categories'));
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Fetch coupon data for the AJAX table.
      */
-    public function create()
+    public function data(Request $request)
     {
-        // Return the view for the coupon creation form
-        return view('admin.coupons.create');
+        $query = Coupon::query();
+
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where('code', 'LIKE', "%{$searchTerm}%");
+        }
+
+        $coupons = $query->latest()->paginate(10);
+        return response()->json($coupons);
+    }
+public function show(Coupon $coupon)
+{
+    // Load the names of products and categories if they exist
+    $products = collect();
+    if ($coupon->product_ids) {
+        $products = Product::whereIn('id', $coupon->product_ids)->pluck('name');
     }
 
+    $categories = collect();
+    if ($coupon->category_ids) {
+        $categories = Category::whereIn('id', $coupon->category_ids)->pluck('name');
+    }
+
+    return view('admin.coupon.show', compact('coupon', 'products', 'categories'));
+}
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * Store a newly created coupon via AJAX.
      */
     public function store(Request $request)
     {
-        // Validate the incoming request data
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'code' => 'required|string|unique:coupons,code',
-            'discount_type' => 'required|in:percentage,fixed',
-            'discount_value' => 'required|numeric|min:0',
-            'expires_at' => 'nullable|date|after:today',
+            'type' => 'required|in:fixed,percent',
+            'value' => 'required|numeric|min:0',
+            'min_amount' => 'nullable|numeric|min:0',
             'usage_limit' => 'nullable|integer|min:1',
-            'usage_limit_per_user' => 'nullable|integer|min:1', // Added validation for the new field
+            'expires_at' => 'nullable|date',
         ]);
 
-        // Create a new coupon with the validated data
-        Coupon::create($request->all());
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
-        // Redirect to the coupon index page with a success message
-        return redirect()->route('coupon.index')
-                         ->with('success', 'Coupon created successfully.');
+        $coupon = Coupon::create($request->all());
+        return response()->json(['success' => 'Coupon created successfully.', 'coupon' => $coupon]);
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Coupon  $coupon
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Coupon $coupon)
-    {
-        // Return the view showing coupon details
-        return view('admin.coupons.show', compact('coupon'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Coupon  $coupon
-     * @return \Illuminate\Http\Response
+     * Fetch a single coupon's data for the edit modal.
      */
     public function edit(Coupon $coupon)
     {
-        // Return the view for the coupon editing form
-        return view('admin.coupons.edit', compact('coupon'));
+        return response()->json($coupon);
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Coupon  $coupon
-     * @return \Illuminate\Http\Response
+     * Update an existing coupon via AJAX.
      */
     public function update(Request $request, Coupon $coupon)
     {
-        // Validate the incoming request data
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'code' => 'required|string|unique:coupons,code,' . $coupon->id,
-            'discount_type' => 'required|in:percentage,fixed',
-            'discount_value' => 'required|numeric|min:0',
-            'expires_at' => 'nullable|date|after:today',
+            'type' => 'required|in:fixed,percent',
+            'value' => 'required|numeric|min:0',
+            'min_amount' => 'nullable|numeric|min:0',
             'usage_limit' => 'nullable|integer|min:1',
-            'usage_limit_per_user' => 'nullable|integer|min:1', // Added validation for the new field
-            'is_active' => 'sometimes|boolean',
+            'expires_at' => 'nullable|date',
         ]);
 
-        // Update the coupon with the validated data
-        $coupon->update($request->all());
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
-        // Redirect to the coupon index page with a success message
-        return redirect()->route('coupon.index')
-                         ->with('success', 'Coupon updated successfully.');
+        $coupon->update($request->all());
+        return response()->json(['success' => 'Coupon updated successfully.', 'coupon' => $coupon]);
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Coupon  $coupon
-     * @return \Illuminate\Http\Response
+     * Delete a coupon via AJAX.
      */
     public function destroy(Coupon $coupon)
     {
-        // Delete the coupon
         $coupon->delete();
-
-        // Redirect back to the index page with a success message
-        return redirect()->route('coupon.index')
-                         ->with('success', 'Coupon deleted successfully.');
+        return response()->json(['success' => 'Coupon deleted successfully.']);
     }
-
-    public function applyCoupon(Request $request)
-{
-    $request->validate([
-        'coupon_code' => 'required|string',
-        'total_price' => 'required|numeric|min:0',
-    ]);
-
-    $coupon = Coupon::where('code', $request->coupon_code)->first();
-
-    // --- Validation Checks ---
-    if (!$coupon) {
-        return response()->json(['success' => false, 'message' => 'Invalid coupon code.']);
-    }
-    if (!$coupon->is_active) {
-        return response()->json(['success' => false, 'message' => 'This coupon is not active.']);
-    }
-    if ($coupon->expires_at && $coupon->expires_at->isPast()) {
-        return response()->json(['success' => false, 'message' => 'This coupon has expired.']);
-    }
-    if ($coupon->usage_limit && $coupon->times_used >= $coupon->usage_limit) {
-        return response()->json(['success' => false, 'message' => 'This coupon has reached its usage limit.']);
-    }
-    
-    // You would also add checks for user-specific limits here,
-    // using the 'coupon_user' pivot table we discussed.
-
-    // --- Calculate Discount ---
-    $discountAmount = 0;
-    if ($coupon->discount_type == 'percentage') {
-        $discountAmount = ($request->total_price * $coupon->discount_value) / 100;
-    } else { // 'fixed'
-        $discountAmount = $coupon->discount_value;
-    }
-
-    // Ensure discount doesn't exceed total price
-    $discountAmount = min($discountAmount, $request->total_price);
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Coupon applied successfully!',
-        'discount_amount' => round($discountAmount, 2)
-    ]);
-}
 }

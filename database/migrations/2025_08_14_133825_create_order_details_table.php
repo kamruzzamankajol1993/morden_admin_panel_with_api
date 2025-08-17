@@ -16,13 +16,15 @@ return new class extends Migration
             $table->foreignId('order_id')->constrained()->onDelete('cascade');
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->string('product_variant_id')->nullable();
+            $table->decimal('discount', 10, 2)->default(0);
+            $table->decimal('after_discount_price', 10, 2)->default(0);
             // Replaced product_variant_id with color and size
             $table->string('color')->nullable();
             $table->string('size')->nullable();
-            
             $table->integer('quantity');
             $table->decimal('unit_price', 10, 2);
             $table->decimal('subtotal', 10, 2);
+            $table->string('delivery_status')->nullable();
             $table->timestamps();
         });
     }

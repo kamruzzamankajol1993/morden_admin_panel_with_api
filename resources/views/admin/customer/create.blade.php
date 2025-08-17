@@ -63,7 +63,7 @@
                     <hr>
                     <h5>Addresses</h5>
                     <div id="address-container"></div>
-                    <button type="button" id="add-address-btn" class="btn btn-sm btn-success mt-2">Add Address</button>
+                    <button type="button" id="add-address-btn" class="btn btn-sm btn-success mt-2"><i class="fa fa-plus me-1"></i>Add Address</button>
                     
                     <div class="mt-4">
                         <button type="submit" class="btn btn-primary">Save Customer</button>
@@ -89,10 +89,26 @@ $(document).ready(function() {
     // Dynamic address fields
     let addressIndex = 0;
     $('#add-address-btn').on('click', function() {
-        const addressHtml = `...`; // Same as before
+        const addressHtml = `
+            <div class="row align-items-center mb-2 address-row">
+                <div class="col-md-8">
+                    <input type="text" name="addresses[${addressIndex}][address]" class="form-control" placeholder="Enter full address" required>
+                </div>
+                <div class="col-md-3">
+                    <select name="addresses[${addressIndex}][address_type]" class="form-select">
+                        <option value="Home">Home</option>
+                        <option value="Office">Office</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <button type="button" class="btn btn-danger btn-sm remove-address-btn">&times;</button>
+                </div>
+            </div>`;
         $('#address-container').append(addressHtml);
         addressIndex++;
     });
+
     $('#address-container').on('click', '.remove-address-btn', function() {
         $(this).closest('.address-row').remove();
     });

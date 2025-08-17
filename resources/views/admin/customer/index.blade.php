@@ -21,7 +21,7 @@
                 <form class="d-flex me-2" role="search">
                     <input class="form-control" id="searchInput" type="search" placeholder="Search customers..." aria-label="Search">
                 </form>
-                <a href="{{ route('customer.create') }}" class="btn btn-primary">Add New Customer</a>
+                <a href="{{ route('customer.create') }}" class="btn text-white" style="background-color: var(--primary-color); white-space: nowrap;"><i data-feather="plus" class="me-1" style="width:18px; height:18px;"></i> Add New Customer</a>
             </div>
         </div>
         <div class="card">

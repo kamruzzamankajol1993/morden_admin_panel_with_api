@@ -16,6 +16,10 @@ class Order extends Model
         'shipping_cost',
         'discount',
         'total_amount',
+        'total_pay',
+        'due',
+        'cod',
+        'old_id',
         'status',
         'shipping_address',
         'billing_address',
@@ -43,4 +47,9 @@ class Order extends Model
     {
         return $this->hasMany(OrderDetail::class);
     }
+
+    public function payments()
+{
+    return $this->hasMany(Payment::class);
+}
 }

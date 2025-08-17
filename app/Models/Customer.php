@@ -13,6 +13,7 @@ class Customer extends Authenticatable
 
     protected $fillable = [
         'old_customer_id',
+        'reward_points',
         'user_id',
         'slug',
         'type',
@@ -40,6 +41,14 @@ public function orders()
 {
     return $this->hasMany(Order::class);
 }
+
+  /**
+     * Get all of the reward point logs for the Customer.
+     */
+    public function rewardPointLogs()
+    {
+        return $this->hasMany(RewardPoint::class);
+    }
 
     /**
      * Hash the password before saving.

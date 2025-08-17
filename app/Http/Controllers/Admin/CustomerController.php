@@ -16,11 +16,15 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Intervention\Image\Laravel\Facades\Image;
 use Illuminate\Support\Facades\Http;
+use App\Models\Order;
+use App\Models\OrderDetail;
+use App\Models\Color;
+use App\Models\Size;
 class CustomerController extends Controller
 {
     public function index()
     {
-
+         
         return view('admin.customer.index');
     }
 

@@ -94,7 +94,11 @@
                                 <input type="text" name="addresses[{{$index}}][address]" class="form-control" value="{{ $address->address }}" required>
                             </div>
                             <div class="col-md-3">
-                                <input type="text" name="addresses[{{$index}}][address_type]" class="form-control" value="{{ $address->address_type }}" placeholder="Type (e.g., Home)">
+                                <select name="addresses[{{$index}}][address_type]" class="form-select">
+                                    <option value="Home" @selected($address->address_type == 'Home')>Home</option>
+                                    <option value="Office" @selected($address->address_type == 'Office')>Office</option>
+                                    <option value="Other" @selected($address->address_type == 'Other')>Other</option>
+                                </select>
                             </div>
                             <div class="col-md-1">
                                 <button type="button" class="btn btn-danger btn-sm remove-address-btn">&times;</button>
@@ -102,7 +106,7 @@
                         </div>
                         @endforeach
                     </div>
-                    <button type="button" id="add-address-btn" class="btn btn-sm btn-success mt-2">Add Address</button>
+                    <button type="button" id="add-address-btn" class="btn btn-sm btn-success mt-2"><i class="fa fa-plus me-1"></i>Add Address</button>
                     
                     <div class="mt-4">
                         <button type="submit" class="btn btn-primary">Update Customer</button>
@@ -133,7 +137,11 @@ $(document).ready(function() {
                     <input type="text" name="addresses[${addressIndex}][address]" class="form-control" placeholder="Enter full address" required>
                 </div>
                 <div class="col-md-3">
-                    <input type="text" name="addresses[${addressIndex}][address_type]" class="form-control" placeholder="Type (e.g., Home)">
+                    <select name="addresses[${addressIndex}][address_type]" class="form-select">
+                        <option value="Home">Home</option>
+                        <option value="Office">Office</option>
+                        <option value="Other">Other</option>
+                    </select>
                 </div>
                 <div class="col-md-1">
                     <button type="button" class="btn btn-danger btn-sm remove-address-btn">&times;</button>
