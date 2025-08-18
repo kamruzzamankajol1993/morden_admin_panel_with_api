@@ -53,6 +53,12 @@ use App\Http\Controllers\Admin\SidebarMenuController;
 use App\Http\Controllers\Admin\OfferSectionController;
 use App\Http\Controllers\Admin\SliderControlController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\RewardPointController;
+use App\Http\Controllers\Admin\ExpenseCategoryController;
+use App\Http\Controllers\Admin\ExpenseController;
+use App\Http\Controllers\Admin\ReportController;
+
+
 
 
 // Route::get('/', function () {
@@ -114,12 +120,35 @@ Route::controller(AuthController::class)->group(function () {
 
 Route::group(['middleware' => ['auth']], function() {
 
+    Route::prefix('reports')->name('report.')->group(function () {
+    Route::get('salesReport', [ReportController::class, 'salesReport'])->name('sales');
+    Route::get('sales-data', [ReportController::class, 'salesReportData'])->name('sales.data');
+
+    Route::get('customer', [ReportController::class, 'customerReport'])->name('customer');
+    Route::get('customer-data', [ReportController::class, 'customerReportData'])->name('customer.data');
+
+    Route::get('category', [ReportController::class, 'categoryReport'])->name('category');
+    Route::get('category-data', [ReportController::class, 'categoryReportData'])->name('category.data');
+
+    Route::get('income', [ReportController::class, 'incomeReport'])->name('income');
+    Route::get('income-data', [ReportController::class, 'incomeReportData'])->name('income.data');
+
+    Route::get('profit-loss', [ReportController::class, 'profitLossReport'])->name('profit_loss');
+    Route::get('profit-loss/data', [ReportController::class, 'profitLossReportData'])->name('profit_loss.data');
+});
+
+    Route::resource('expense-category', ExpenseCategoryController::class);
+Route::get('ajax-expense-category', [ExpenseCategoryController::class, 'data'])->name('expense-category.data');
+
+Route::resource('expense', ExpenseController::class);
+Route::get('ajax-expense', [ExpenseController::class, 'data'])->name('expense.data');
+
     Route::prefix('reward-points')->name('reward.')->group(function () {
-        Route::get('data', [App\Http\Controllers\Admin\RewardPointController::class, 'data'])->name('data');
-    Route::get('settings', [App\Http\Controllers\Admin\RewardPointController::class, 'settings'])->name('settings');
-    Route::post('settings', [App\Http\Controllers\Admin\RewardPointController::class, 'updateSettings'])->name('settings.update');
-    Route::get('history', [App\Http\Controllers\Admin\RewardPointController::class, 'history'])->name('history');
-    Route::get('history/{customer}', [App\Http\Controllers\Admin\RewardPointController::class, 'customerHistory'])->name('customer.history');
+        Route::get('data', [RewardPointController::class, 'data'])->name('data');
+    Route::get('settings', [RewardPointController::class, 'settings'])->name('settings');
+    Route::post('settings', [RewardPointController::class, 'updateSettings'])->name('settings.update');
+    Route::get('history', [RewardPointController::class, 'history'])->name('history');
+    Route::get('history/{customer}', [RewardPointController::class, 'customerHistory'])->name('customer.history');
 });
 
     // Add this to your admin route group

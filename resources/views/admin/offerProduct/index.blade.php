@@ -9,7 +9,7 @@
                  <form class="d-flex me-2" role="search">
                     <input class="form-control" id="searchInput" type="search" placeholder="Search deals..." aria-label="Search">
                 </form>
-                <a href="{{ route('offer-product.create') }}" class="btn text-white" style="background-color: var(--primary-color); white-space: nowrap;">Create New Deal</a>
+                <a href="{{ route('offer-product.create') }}" class="btn text-white" style="background-color: var(--primary-color); white-space: nowrap;"><i data-feather="plus" class="me-1" style="width:18px; height:18px;"></i> Create New Deal</a>
             </div>
         </div>
         @include('flash_message')

@@ -48,16 +48,17 @@
 @section('body')
 <main class="main-content">
     <div class="container-fluid">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
                 <h5 class="mb-0">Coupon Management</h5>
                 <div class="d-flex align-items-center">
                     <input type="text" id="search-input" class="form-control me-2" placeholder="Search by code..." style="width: 200px;">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
+                    <button type="button" class="btn text-white" style="background-color: var(--primary-color); white-space: nowrap;" data-bs-toggle="modal" data-bs-target="#addModal">
                         <i class="fa fa-plus me-1"></i> Add New
                     </button>
                 </div>
             </div>
+        <div class="card">
+            
             <div class="card-body">
                 <div class="table-responsive position-relative" style="min-height: 400px;">
                     <div class="loading-spinner">

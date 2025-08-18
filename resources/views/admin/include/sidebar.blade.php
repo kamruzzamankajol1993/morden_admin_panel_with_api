@@ -208,6 +208,27 @@
                         <span>Damage Product</span>
                     </a>
                 </li>
+   @if ($usr->can('expense-categoryAdd') || $usr->can('expense-categoryView') ||  $usr->can('expense-categoryDelete') ||  $usr->can('expense-categoryUpdate'))
+                 {{-- NEW EXPENSE MENU --}}
+                <li class="sidebar-title">
+                    <span>Finance</span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#expenseSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="expenseSubmenu">
+                        <i data-feather="dollar-sign"></i>
+                        <span>Expense</span>
+                        <i data-feather="chevron-down" class="ms-auto"></i>
+                    </a>
+                    <ul class="collapse list-unstyled {{ Route::is('expense-category.index') || Route::is('expense.index') ? 'show' : '' }}" id="expenseSubmenu" data-bs-parent="#sidebar-menu">
+                         @if ($usr->can('expenseAdd') || $usr->can('expenseView') ||  $usr->can('expenseDelete') ||  $usr->can('expenseUpdate') || $usr->can('expense-categoryAdd') || $usr->can('expense-categoryView') ||  $usr->can('expense-categoryDelete') ||  $usr->can('expense-categoryUpdate'))
+                        <li><a class="nav-link {{ Route::is('expense-category.index') ? 'active' : '' }}" href="{{ route('expense-category.index') }}">Expense Category</a></li>
+                        @endif
+                         @if ($usr->can('expenseAdd') || $usr->can('expenseView') ||  $usr->can('expenseDelete') ||  $usr->can('expenseUpdate'))
+                        <li><a class="nav-link {{ Route::is('expense.index') ? 'active' : '' }}" href="{{ route('expense.index') }}">Expense List</a></li>
+                        @endif
+                    </ul>
+                </li>
+@endif
 
                 <li class="sidebar-title">
                     <span>Report</span>
@@ -218,10 +239,12 @@
                         <span>Report</span>
                         <i data-feather="chevron-down" class="ms-auto"></i>
                     </a>
-                    <ul class="collapse list-unstyled" id="reportSubmenu" data-bs-parent="#sidebar-menu">
-                        <li><a class="nav-link" href="#">Sales Report</a></li>
-                        <li><a class="nav-link" href="#">Inventory Report</a></li>
-                        <li><a class="nav-link" href="#">Customer Report</a></li>
+                    <ul class="collapse list-unstyled {{Route::is('report.profit_loss') || Route::is('report.income') || Route::is('report.sales') || Route::is('report.customer') || Route::is('report.category') ? 'show' : '' }}" id="reportSubmenu" data-bs-parent="#sidebar-menu">
+                        <li><a class="nav-link {{ Route::is('report.sales') ? 'active' : '' }}" href="{{ route('report.sales') }}">Sales Report</a></li>
+                        <li><a class="nav-link {{ Route::is('report.customer') ? 'active' : '' }}" href="{{ route('report.customer') }}">Customer Report</a></li>
+                        <li><a class="nav-link {{ Route::is('report.category') ? 'active' : '' }}" href="{{ route('report.category') }}">Category Wise Report</a></li>
+                          <li><a class="nav-link {{ Route::is('report.income') ? 'active' : '' }}" href="{{ route('report.income') }}">Income Report</a></li>
+                           <li><a class="nav-link {{ Route::is('report.profit_loss') ? 'active' : '' }}" href="{{ route('report.profit_loss') }}">Profit & Loss Report</a></li>
                     </ul>
                 </li>
 
