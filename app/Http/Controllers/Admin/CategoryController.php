@@ -22,7 +22,7 @@ class CategoryController extends Controller
         $query = Category::query();
 
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $query->where('name', 'like',$request->search . '%');
         }
 
         $sort = $request->get('sort', 'id');

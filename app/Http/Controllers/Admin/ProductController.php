@@ -73,11 +73,11 @@ class ProductController extends Controller
 
         // --- NEW: Advanced Filtering Logic ---
         if ($request->filled('product_name')) {
-            $query->where('name', 'like', '%' . $request->product_name . '%');
+            $query->where('name', 'like',$request->product_name . '%');
         }
 
         if ($request->filled('product_code')) {
-            $query->where('product_code', 'like', '%' . $request->product_code . '%');
+            $query->where('product_code', 'like',$request->product_code . '%');
         }
 
         if ($request->filled('category_id')) {

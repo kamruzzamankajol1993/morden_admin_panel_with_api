@@ -25,8 +25,8 @@ class BundleOfferController extends Controller
         $query = BundleOffer::query();
 
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('title', 'like', '%' . $request->search . '%');
+            $query->where('name', 'like',$request->search . '%')
+                  ->orWhere('title', 'like',$request->search . '%');
         }
 
         $sort = $request->get('sort', 'id');

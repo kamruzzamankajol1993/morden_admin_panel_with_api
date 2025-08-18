@@ -20,7 +20,7 @@ class SizeChartController extends Controller
         $query = SizeChart::with('entries');
 
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $query->where('name', 'like',$request->search . '%');
         }
 
         $query->orderBy($request->get('sort', 'id'), $request->get('direction', 'desc'));

@@ -36,9 +36,9 @@ class CustomerController extends Controller
         }], 'total_amount');
 
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('email', 'like', '%' . $request->search . '%')
-                  ->orWhere('phone', 'like', '%' . $request->search . '%');
+            $query->where('name', 'like',$request->search . '%')
+                  ->orWhere('email', 'like',$request->search . '%')
+                  ->orWhere('phone', 'like',$request->search . '%');
         }
 
         $query->orderBy($request->get('sort', 'id'), $request->get('direction', 'desc'));

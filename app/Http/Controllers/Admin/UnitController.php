@@ -19,8 +19,8 @@ class UnitController extends Controller
         $query = Unit::query();
 
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('code', 'like', '%' . $request->search . '%');
+            $query->where('name', 'like',$request->search . '%')
+                  ->orWhere('code', 'like',$request->search . '%');
         }
 
         $query->orderBy($request->get('sort', 'id'), $request->get('direction', 'desc'));

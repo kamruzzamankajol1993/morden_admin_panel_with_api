@@ -32,12 +32,12 @@ class SubSubcategoryController extends Controller
         $query = SubSubcategory::with('subcategory.category');
 
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%')
+            $query->where('name', 'like',$request->search . '%')
                   ->orWhereHas('subcategory', function ($q) use ($request) {
-                      $q->where('name', 'like', '%' . $request->search . '%');
+                      $q->where('name', 'like',$request->search . '%');
                   })
                   ->orWhereHas('subcategory.category', function ($q) use ($request) {
-                      $q->where('name', 'like', '%' . $request->search . '%');
+                      $q->where('name', 'like',$request->search . '%');
                   });
         }
 

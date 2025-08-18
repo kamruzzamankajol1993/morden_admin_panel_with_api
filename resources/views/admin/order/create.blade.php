@@ -259,7 +259,7 @@ $(document).ready(function() {
     // --- Client Search & Address Logic ---
     $("#customerSearch").autocomplete({
         source: "{{ route('order.search-customers') }}",
-        minLength: 2,
+        minLength: 1,
         select: function(event, ui) {
             const customer = ui.item;
             $('#customerSearch').val(`${customer.name} - ${customer.phone}`);
@@ -334,7 +334,7 @@ $(document).ready(function() {
     function initializeProductSearch(element) {
         $(element).autocomplete({
             source: "{{ route('order.search-products') }}",
-            minLength: 2,
+            minLength: 1,
             select: function(event, ui) {
                 const row = $(this).closest('tr');
                 const productId = ui.item.id;

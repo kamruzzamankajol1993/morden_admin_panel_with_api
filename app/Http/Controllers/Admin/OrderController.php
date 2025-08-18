@@ -20,8 +20,8 @@ class OrderController extends Controller
     public function searchCustomers(Request $request)
 {
     $term = $request->get('term');
-    $customers = Customer::where('name', 'LIKE', "%{$term}%")
-                       ->orWhere('phone', 'LIKE', "%{$term}%")
+    $customers = Customer::where('name', 'LIKE', $term . '%')
+                       ->orWhere('phone', 'LIKE', $term . '%')
                        ->limit(10)
                        ->get();
     return response()->json($customers);
@@ -50,13 +50,13 @@ class OrderController extends Controller
 
         // Handle specific filters
         if ($request->filled('order_id')) {
-            $query->where('invoice_no', 'like', '%' . $request->order_id . '%');
+            $query->where('invoice_no', 'like', $request->order_id . '%');
         }
 
         if ($request->filled('customer_name')) {
             $query->whereHas('customer', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->customer_name . '%')
-                  ->orWhere('phone', 'like', '%' . $request->customer_name . '%');
+                $q->where('name', 'like', $request->customer_name . '%')
+                  ->orWhere('phone', 'like', $request->customer_name . '%');
             });
         }
 
@@ -105,8 +105,8 @@ class OrderController extends Controller
 {
     $term = $request->get('term');
     
-    $products = Product::where('name', 'LIKE', "%{$term}%")
-        ->orWhere('product_code', 'LIKE', "%{$term}%")
+    $products = Product::where('name', 'LIKE', $term . '%')
+        ->orWhere('product_code', 'LIKE', $term . '%')
         ->limit(10)
         ->get();
 

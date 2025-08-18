@@ -29,9 +29,9 @@ class OfferDetailController extends Controller
         // Handle search
         if ($request->filled('search')) {
             $searchTerm = $request->search;
-            $query->where('title', 'like', '%' . $searchTerm . '%')
+            $query->where('title', 'like',$searchTerm . '%')
                   ->orWhereHas('bundleOffer', function ($q) use ($searchTerm) {
-                      $q->where('name', 'like', '%' . $searchTerm . '%');
+                      $q->where('name', 'like',$searchTerm . '%');
                   });
         }
 
