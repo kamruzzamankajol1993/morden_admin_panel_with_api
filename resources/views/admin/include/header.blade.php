@@ -23,8 +23,9 @@
                             <span class="d-none d-sm-inline ms-1">Clear Cache</span>
                         </a>
 
-                        <a class="nav-link text-secondary me-3" href="#"><i data-feather="bell"></i></a>
-                        <a class="nav-link text-secondary me-3" href="#"><i data-feather="message-square"></i></a>
+                        <a class="btn btn-sm btn-success text-white me-3" href="#">
+                            <i data-feather="monitor" style="width:16px; height:16px;"></i> Pos
+                        </a>
 
                         <!-- Profile Dropdown -->
                         <div class="dropdown">

@@ -177,7 +177,7 @@
                 </li>
                 @endif
 
-                <li class="sidebar-title">
+                {{-- <li class="sidebar-title">
                     <span>Inventory & Purchase</span>
                 </li>
                 <li class="nav-item">
@@ -207,8 +207,8 @@
                         <i data-feather="alert-triangle"></i>
                         <span>Damage Product</span>
                     </a>
-                </li>
-   @if ($usr->can('expense-categoryAdd') || $usr->can('expense-categoryView') ||  $usr->can('expense-categoryDelete') ||  $usr->can('expense-categoryUpdate'))
+                </li> --}}
+   @if ($usr->can('expenseAdd') || $usr->can('expenseView') ||  $usr->can('expenseDelete') ||  $usr->can('expenseUpdate') || $usr->can('expense-categoryAdd') || $usr->can('expense-categoryView') ||  $usr->can('expense-categoryDelete') ||  $usr->can('expense-categoryUpdate'))
                  {{-- NEW EXPENSE MENU --}}
                 <li class="sidebar-title">
                     <span>Finance</span>
@@ -220,7 +220,7 @@
                         <i data-feather="chevron-down" class="ms-auto"></i>
                     </a>
                     <ul class="collapse list-unstyled {{ Route::is('expense-category.index') || Route::is('expense.index') ? 'show' : '' }}" id="expenseSubmenu" data-bs-parent="#sidebar-menu">
-                         @if ($usr->can('expenseAdd') || $usr->can('expenseView') ||  $usr->can('expenseDelete') ||  $usr->can('expenseUpdate') || $usr->can('expense-categoryAdd') || $usr->can('expense-categoryView') ||  $usr->can('expense-categoryDelete') ||  $usr->can('expense-categoryUpdate'))
+                         @if ( $usr->can('expense-categoryAdd') || $usr->can('expense-categoryView') ||  $usr->can('expense-categoryDelete') ||  $usr->can('expense-categoryUpdate'))
                         <li><a class="nav-link {{ Route::is('expense-category.index') ? 'active' : '' }}" href="{{ route('expense-category.index') }}">Expense Category</a></li>
                         @endif
                          @if ($usr->can('expenseAdd') || $usr->can('expenseView') ||  $usr->can('expenseDelete') ||  $usr->can('expenseUpdate'))
@@ -229,7 +229,7 @@
                     </ul>
                 </li>
 @endif
-
+  @if ($usr->can('reportAdd'))
                 <li class="sidebar-title">
                     <span>Report</span>
                 </li>
@@ -247,6 +247,7 @@
                            <li><a class="nav-link {{ Route::is('report.profit_loss') ? 'active' : '' }}" href="{{ route('report.profit_loss') }}">Profit & Loss Report</a></li>
                     </ul>
                 </li>
+                @endif
 
                 <li class="sidebar-title">
                     <span>Website Content</span>

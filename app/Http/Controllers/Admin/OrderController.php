@@ -50,15 +50,24 @@ class OrderController extends Controller
 
         // Handle specific filters
         if ($request->filled('order_id')) {
-            $query->where('invoice_no', 'like', $request->order_id . '%');
+            $query->where('invoice_no', 'like', '%' . $request->order_id . '%');
         }
 
         if ($request->filled('customer_name')) {
             $query->whereHas('customer', function ($q) use ($request) {
-                $q->where('name', 'like', $request->customer_name . '%')
-                  ->orWhere('phone', 'like', $request->customer_name . '%');
+                $q->where('name', 'like', '%' . $request->customer_name . '%')
+                  ->orWhere('phone', 'like', '%' . $request->customer_name . '%');
             });
         }
+        
+        // New: Filter by Product Name or Code
+        if ($request->filled('product_info')) {
+            $query->whereHas('orderDetails.product', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->product_info . '%')
+                  ->orWhere('product_code', 'like', '%' . $request->product_info . '%');
+            });
+        }
+
 
         if ($request->filled('start_date') && $request->filled('end_date')) {
             $query->whereBetween(DB::raw('DATE(created_at)'), [$request->start_date, $request->end_date]);

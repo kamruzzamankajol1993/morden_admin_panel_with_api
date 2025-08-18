@@ -39,7 +39,7 @@
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
             <h2 class="mb-0">Invoice List</h2>
-            <a href="{{ route('product.create') }}" class="btn text-white" style="background-color: var(--primary-color); white-space: nowrap;">
+            <a href="{{ route('order.create') }}" class="btn text-white" style="background-color: var(--primary-color); white-space: nowrap;">
                 <i data-feather="plus" class="me-1" style="width:18px; height:18px;"></i> Add New Invoice
             </a>
         </div>
@@ -71,26 +71,30 @@
                 {{-- Filter Section --}}
                 <div class="p-3 mb-3 bg-light rounded border">
                     <form id="filterForm" class="row g-3 align-items-end">
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label for="filterOrderId" class="form-label">Order ID</label>
-                            <input type="text" class="form-control" id="filterOrderId">
+                            <input type="text" class="form-control form-control-sm" id="filterOrderId" placeholder="Search ID...">
                         </div>
-                        <div class="col-md-3">
-                            <label for="filterCustomerName" class="form-label">Customer Name/Phone</label>
-                            <input type="text" class="form-control" id="filterCustomerName">
+                        <div class="col-md-2">
+                            <label for="filterCustomerName" class="form-label">Customer</label>
+                            <input type="text" class="form-control form-control-sm" id="filterCustomerName" placeholder="Name/Phone...">
+                        </div>
+                         <div class="col-md-2">
+                            <label for="filterProduct" class="form-label">Product</label>
+                            <input type="text" class="form-control form-control-sm" id="filterProduct" placeholder="Name/Code...">
                         </div>
                         <div class="col-md-2">
                             <label for="filterStartDate" class="form-label">Start Date</label>
-                            <input type="text" class="form-control" id="filterStartDate" placeholder="Select date...">
+                            <input type="text" class="form-control form-control-sm" id="filterStartDate" placeholder="Select date...">
                         </div>
                         <div class="col-md-2">
                             <label for="filterEndDate" class="form-label">End Date</label>
-                            <input type="text" class="form-control" id="filterEndDate" placeholder="Select date...">
+                            <input type="text" class="form-control form-control-sm" id="filterEndDate" placeholder="Select date...">
                         </div>
                         <div class="col-md-2">
-                            <div class="d-grid gap-2">
-                                <button type="button" id="filterBtn" class="btn btn-primary"><i class="fa fa-filter me-1"></i> Filter</button>
-                                <button type="button" id="resetBtn" class="btn btn-secondary"><i class="fa fa-undo me-1"></i> Reset</button>
+                            <div class="d-flex gap-2">
+                                <button type="button" id="filterBtn" class="btn btn-primary w-100"><i class="fa fa-filter me-1"></i></button>
+                                <button type="button" id="resetBtn" class="btn btn-secondary w-100"><i class="fa fa-undo me-1"></i></button>
                             </div>
                         </div>
                     </form>
@@ -136,7 +140,6 @@
     </div>
 </main>
 
-<!-- Modals -->
 <div class="modal fade" id="statusModal" tabindex="-1">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
@@ -187,6 +190,7 @@ $(document).ready(function() {
     var currentPage = 1, currentStatus = 'pending';
     var statusModal = new bootstrap.Modal(document.getElementById('statusModal'));
     var detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
+    var debounceTimer;
 
     flatpickr("#filterStartDate", { dateFormat: "Y-m-d" });
     flatpickr("#filterEndDate", { dateFormat: "Y-m-d" });
@@ -210,6 +214,7 @@ $(document).ready(function() {
             status: currentStatus,
             order_id: $('#filterOrderId').val(),
             customer_name: $('#filterCustomerName').val(),
+            product_info: $('#filterProduct').val(),
             start_date: $('#filterStartDate').val(),
             end_date: $('#filterEndDate').val(),
         };
@@ -296,22 +301,32 @@ $(document).ready(function() {
         fetchData();
     });
 
+    // Onkeyup search with debounce
+    const searchInputs = '#filterOrderId, #filterCustomerName, #filterProduct';
+    $(document).on('keyup', searchInputs, function() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(function() {
+            currentPage = 1; 
+            fetchData();
+        }, 500); // 500ms delay
+    });
+    
     $('#filterBtn').on('click', function() {
+        clearTimeout(debounceTimer);
         currentPage = 1;
         fetchData();
     });
 
     $('#resetBtn').on('click', function() {
         $('#filterForm')[0].reset();
-         // Also clear flatpickr instances
         flatpickr("#filterStartDate").clear();
         flatpickr("#filterEndDate").clear();
         currentPage = 1;
         fetchData();
     });
+
     $(document).on('click', '.page-link', function (e) { e.preventDefault(); if(!$(this).parent().hasClass('disabled')) { currentPage = $(this).data('page'); fetchData(); } });
     
-     // Corrected Delete Handler
     $(document).on('click', '.btn-delete', function () {
         const id = $(this).data('id');
         Swal.fire({
