@@ -66,8 +66,8 @@
                                         <span class="fw-bold">{{ $item->name }}</span><br>
                                         @if($item->type === 'category')
                                             <span class="badge bg-primary-soft text-primary item-type-badge">Category</span>
-                                        @elseif($item->type === 'bundle_offer')
-                                            <span class="badge bg-success-soft text-success item-type-badge">Bundle Offer</span>
+                                        @else
+                                            <span class="badge bg-success-soft text-success item-type-badge">{{ $item->type }}</span>
                                         @endif
                                     </div>
                                     

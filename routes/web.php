@@ -57,6 +57,7 @@ use App\Http\Controllers\Admin\RewardPointController;
 use App\Http\Controllers\Admin\ExpenseCategoryController;
 use App\Http\Controllers\Admin\ExpenseController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\PosController;
 
 
 
@@ -136,6 +137,14 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('profit-loss', [ReportController::class, 'profitLossReport'])->name('profit_loss');
     Route::get('profit-loss/data', [ReportController::class, 'profitLossReportData'])->name('profit_loss.data');
 });
+
+Route::resource('pos', PosController::class);
+
+// Route to handle live customer search
+Route::get('customers-search', [PosController::class, 'search'])->name('customers.search');
+
+// Route to handle new customer creation
+Route::post('customers', [PosController::class, 'store'])->name('customers.store');
 
     Route::resource('expense-category', ExpenseCategoryController::class);
 Route::get('ajax-expense-category', [ExpenseCategoryController::class, 'data'])->name('expense-category.data');

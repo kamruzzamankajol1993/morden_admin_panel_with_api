@@ -124,6 +124,13 @@
                             @else
                                 <p class="text-muted">No thumbnail images.</p>
                             @endif
+                             @if(!empty($product->main_image) && is_array($product->main_image))
+                                @foreach($product->main_image as $image)
+                                    <img src="{{ asset('public/uploads/'.$image) }}" class="img-thumbnail" style="height: 80px; width: 80px; object-fit: cover;" alt="Main Image">
+                                @endforeach
+                            @else
+                                <p class="text-muted">No thumbnail images.</p>
+                            @endif
                         </div>
                         <hr>
                         <h5 class="card-title mb-3">Pricing & Organization</h5>

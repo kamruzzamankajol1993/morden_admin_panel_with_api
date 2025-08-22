@@ -16,6 +16,8 @@ class FrontendControlController extends Controller
         // Sync both data sources with the menu items table
         $this->syncMenuItems();
 
+        //dd($this->syncMenuItems());
+
         $menuItems = MenuItem::orderBy('order')->get();
         
         $settings = Setting::pluck('value', 'key');
@@ -74,8 +76,8 @@ class FrontendControlController extends Controller
         $BundleOffers = BundleOffer::all();
         foreach ($BundleOffers as $group) {
             MenuItem::firstOrCreate(
-                ['name' => $group->name, 'type' => 'bundle_offer'],
-                ['route' => '/bundle-offer/' . $group->id] // Example route
+                ['name' => $group->name, 'type' => $group->title],
+                ['route' => '/offer/' . $group->slug] // Example route
             );
         }
     }

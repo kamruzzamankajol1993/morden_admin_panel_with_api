@@ -22,10 +22,11 @@
                             <i data-feather="refresh-cw" style="width:16px; height:16px;"></i>
                             <span class="d-none d-sm-inline ms-1">Clear Cache</span>
                         </a>
-
-                        <a class="btn btn-sm btn-success text-white me-3" href="#">
+@if ($usr->can('posView'))
+                        <a class="btn btn-sm btn-success text-white me-3" href="{{route('pos.index')}}">
                             <i data-feather="monitor" style="width:16px; height:16px;"></i> Pos
                         </a>
+                        @endif
 
                         <!-- Profile Dropdown -->
                         <div class="dropdown">

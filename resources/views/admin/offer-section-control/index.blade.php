@@ -32,7 +32,7 @@
                                     <option value="">-- None --</option>
                                     @foreach($bundleOffers as $offer)
                                         <option value="{{ $offer->id }}" @if($settings->bundle_offer_id == $offer->id) selected @endif>
-                                            {{ $offer->title }}
+                                            {{ $offer->name }}
                                         </option>
                                     @endforeach
                                 </select>

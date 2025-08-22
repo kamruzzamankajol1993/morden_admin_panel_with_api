@@ -11,6 +11,7 @@ use Intervention\Image\Laravel\Facades\Image;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
 
+use Illuminate\Support\Str;
 class BundleOfferController extends Controller
 {
     public function index()
@@ -77,6 +78,8 @@ class BundleOfferController extends Controller
             $data['image'] = 'uploads/offers/' . $imageName;
         }
 
+        $data['slug'] = Str::slug($request->name);
+
         BundleOffer::create($data);
 
         return redirect()->route('bundle-offer.index')->with('success', 'offer created successfully.');
@@ -128,6 +131,8 @@ class BundleOfferController extends Controller
 
             $data['image'] = 'uploads/offers/' . $imageName;
         }
+
+        $data['slug'] = Str::slug($request->name);
 
         $bundleOffer->update($data);
 

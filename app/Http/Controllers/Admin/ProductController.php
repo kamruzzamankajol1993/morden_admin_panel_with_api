@@ -61,6 +61,8 @@ class ProductController extends Controller
 
      public function index()
     {
+
+        
         // Pass both sizes (for the modal) and categories (for the new filter)
         $sizes = Size::all()->keyBy('id');
         $categories = Category::where('status', 1)->orderBy('name')->get(); // MODIFIED: Get categories for the filter
@@ -425,12 +427,12 @@ class ProductController extends Controller
 
     private function uploadImage($image, $directory)
     {
-        $imageName = Str::uuid() . '.' . $image->getClientOriginalExtension();
+        $imageName = Str::uuid() . '.' . 'webp';
         $destinationPath = public_path('uploads/' . $directory);
         if (!File::isDirectory($destinationPath)) {
             File::makeDirectory($destinationPath, 0777, true, true);
         }
-        Image::read($image->getRealPath())->resize(800, 800, function ($c) {
+        Image::read($image->getRealPath())->resize(600, 600, function ($c) {
             $c->aspectRatio(); $c->upsize();
         })->save($destinationPath . '/' . $imageName);
         return $directory . '/' . $imageName;
@@ -438,12 +440,12 @@ class ProductController extends Controller
 
     private function uploadImageMobile($image, $directory)
     {
-        $imageName = Str::uuid() . '.' . $image->getClientOriginalExtension();
+        $imageName = Str::uuid() . '.' . 'webp';
         $destinationPath = public_path('uploads/' . $directory);
         if (!File::isDirectory($destinationPath)) {
             File::makeDirectory($destinationPath, 0777, true, true);
         }
-        Image::read($image->getRealPath())->resize(400, 400, function ($c) {
+        Image::read($image->getRealPath())->resize(300, 300, function ($c) {
             $c->aspectRatio(); $c->upsize();
         })->save($destinationPath . '/' . $imageName);
         return $directory . '/' . $imageName;
