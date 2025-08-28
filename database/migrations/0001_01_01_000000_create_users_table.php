@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('old_id')->nullable();
             $table->string('customer_id')->nullable();
             $table->string('status')->nullable();
+            $table->string('type')->nullable();
             $table->string('designation_id')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();

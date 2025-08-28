@@ -31,7 +31,7 @@ class UserController extends Controller
     public function downloadUserPdf()
 {
 
-     $userList = User::where('id', '!=', 1)->latest()->get();
+     $userList = User::where('id', '!=', 1)->where('user_type', 2)->latest()->get();
 
     $html = view('admin.users._partial.pdfSheet', ['userList' => $userList ])->render();
 
@@ -46,7 +46,7 @@ class UserController extends Controller
 
     public function data(Request $request)
 {
-    $query = User::query()->where('id', '!=', 1)->where('status',1);
+    $query = User::query()->where('id', '!=', 1)->where('user_type', 2)->where('status',1);
 
     // Search by name, phone, or email
     if ($request->filled('search')) {
@@ -103,9 +103,8 @@ class UserController extends Controller
 
         CommonController::addToLog('user page view');
 
-      
-                $data = User::where('id','!=',1)->latest()->get();
-            
+
+                $data = User::where('id','!=',1)->where('user_type', 2)->latest()->get();
 
         return view('admin.users.index',compact('data'));
     }
@@ -196,6 +195,7 @@ class UserController extends Controller
         }
         $input['image'] = $userImage;
         $input['status'] = 1;
+        $input['user_type'] = 2;
     
         $user = User::create($input);
         $user->assignRole($request->input('roles'));
@@ -295,6 +295,7 @@ $time_dy = time().date("Ymd");
         }
         $input['image'] = $userImage;
         $input['status'] = 1;
+         $input['user_type'] = 2;
     
         $user = User::find($id);
         $user->update($input);

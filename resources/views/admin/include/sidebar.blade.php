@@ -176,33 +176,60 @@
                     </ul>
                 </li>
                 @endif
+                @if ($usr->can('anlyticSettingView'))
+<li class="sidebar-title">
+                    <span>Marketing</span>
+                </li>
 
-                {{-- <li class="sidebar-title">
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('settings.analytics.index') ? 'active' : '' }}" href="{{ route('settings.analytics.index') }}">
+                        <i data-feather="bar-chart-2"></i>
+                        <span>Facebook & Google</span>
+                    </a>
+                </li>
+                @endif
+
+@if ($usr->can('stockView') || $usr->can('supplierAdd') || $usr->can('supplierView') ||  $usr->can('supplierDelete') ||  $usr->can('supplierUpdate') ||$usr->can('purchaseAdd') || $usr->can('purchaseView') ||  $usr->can('purchaseDelete') ||  $usr->can('purchaseUpdate'))
+                 <li class="sidebar-title">
                     <span>Inventory & Purchase</span>
                 </li>
+                {{-- NEW PURCHASE MENU --}}
+                @if ($usr->can('purchaseAdd') || $usr->can('purchaseView') ||  $usr->can('purchaseDelete') ||  $usr->can('purchaseUpdate'))
                 <li class="nav-item">
                     <a class="nav-link" href="#purchaseSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="purchaseSubmenu">
                         <i data-feather="truck"></i>
                         <span>Purchase</span>
                         <i data-feather="chevron-down" class="ms-auto"></i>
                     </a>
-                    <ul class="collapse list-unstyled" id="purchaseSubmenu" data-bs-parent="#sidebar-menu">
-                        <li><a class="nav-link" href="#">Purchase Return</a></li>
+                    <ul class="collapse list-unstyled {{ Route::is('purchase.create')|| Route::is('purchase.index') || Route::is('purchase.show') || Route::is('purchase.edit') ? 'show' : '' }}" id="purchaseSubmenu" data-bs-parent="#sidebar-menu">
+@if($usr->can('purchaseAdd'))
+                        <li><a class="nav-link {{ Route::is('purchase.create') ? 'active' : '' }}" href="{{ route('purchase.create') }}">Create Purchase</a></li>
+@endif
+@if($usr->can('purchaseView'))
+                        <li><a class="nav-link {{ Route::is('purchase.index') || Route::is('purchase.show') || Route::is('purchase.edit') ? 'active' : '' }}" href="{{ route('purchase.index') }}">Purchase List</a></li>
+                        @endif
                     </ul>
                 </li>
+                @endif
+                {{-- NEW SUPPLIER MENU --}}
+                @if($usr->can('supplierAdd') || $usr->can('supplierView') ||  $usr->can('supplierDelete') ||  $usr->can('supplierUpdate'))
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link {{ Route::is('supplier.index') || Route::is('supplier.create') || Route::is('supplier.edit') || Route::is('supplier.show') ? 'active' : '' }}" href="{{ route('supplier.index') }}">
                         <i data-feather="briefcase"></i>
                         <span>Supplier</span>
                     </a>
                 </li>
+                @endif
+                @if ($usr->can('stockView'))
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link {{ Route::is('stock.index') ? 'active' : '' }}" href="{{ route('stock.index') }}">
                         <i data-feather="archive"></i>
                         <span>Stock</span>
                     </a>
                 </li>
-                <li class="nav-item">
+                @endif
+                @endif
+                {{-- <li class="nav-item">
                     <a class="nav-link" href="#">
                         <i data-feather="alert-triangle"></i>
                         <span>Damage Product</span>
@@ -259,8 +286,14 @@
                         <span>Content</span>
                         <i data-feather="chevron-down" class="ms-auto"></i>
                     </a>
-                    <ul class="collapse list-unstyled {{Route::is('extraPage.index') ||  Route::is('message.index') ||  Route::is('aboutUs.index') ||  Route::is('socialLink.index')  ? 'show' : '' }}" id="contentSubmenu" data-bs-parent="#sidebar-menu">
+                    <ul class="collapse list-unstyled {{Route::is('review.index') || Route::is('review.edit') || Route::is('review.show')||Route::is('extraPage.index') ||  Route::is('message.index') ||  Route::is('aboutUs.index') ||  Route::is('socialLink.index')  ? 'show' : '' }}" id="contentSubmenu" data-bs-parent="#sidebar-menu">
                       
+
+                        @if ($usr->can('reviewAdd') || $usr->can('reviewView') ||  $usr->can('reviewDelete') ||  $usr->can('reviewUpdate'))
+                    <li>
+                        <a class="nav-link {{ Route::is('review.index') || Route::is('review.edit') || Route::is('review.show') ? 'active' : '' }}" href="{{ route('review.index') }}">Review</a>
+                    </li>
+                    @endif
                           @if ($usr->can('socialLinkAdd') || $usr->can('socialLinkView') ||  $usr->can('socialLinkDelete') ||  $usr->can('socialLinkUpdate'))
                     <li>
                         <a class="nav-link {{ Route::is('socialLink.index') || Route::is('socialLink.edit') || Route::is('socialLink.create') ? 'active' : '' }}" href="{{ route('socialLink.index') }}">Social Link</a>
