@@ -29,6 +29,19 @@
                         <strong>Comment:</strong>
                         <p class="mt-2 text-muted">{{ $review->comment ?? 'No comment provided.' }}</p>
                     </li>
+                    {{-- Add this section to display images --}}
+                    @if($review->images->isNotEmpty())
+                    <li class="list-group-item">
+                        <strong>Images:</strong>
+                        <div class="mt-2 d-flex flex-wrap gap-2">
+                            @foreach($review->images as $image)
+                                <a href="{{ asset('storage/' . $image->image) }}" data-lightbox="review-images">
+                                    <img src="{{ asset('storage/' . $image->image) }}" alt="Review Image" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;">
+                                </a>
+                            @endforeach
+                        </div>
+                    </li>
+                    @endif
                 </ul>
             </div>
         </div>

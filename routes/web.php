@@ -133,7 +133,7 @@ Route::group(['middleware' => ['auth']], function() {
 
 
 
-
+Route::delete('review-images/{image}', [ReviewController::class, 'destroyImage'])->name('review.image.destroy');
     // Profit & Loss Routes
     Route::get('profit-and-loss', [ReportController::class, 'profitAndLossIndex'])->name('profit_and_loss.index');
     Route::get('profit-and-loss-generate', [ReportController::class, 'generateProfitAndLoss'])->name('profit_and_loss.generate');
