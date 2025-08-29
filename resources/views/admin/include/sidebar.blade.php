@@ -256,6 +256,57 @@
                     </ul>
                 </li>
 @endif
+   @if ($usr->can('bankAdd') || $usr->can('bankView') ||$usr->can('bankDelete') || $usr->can('bankUpdate') || $usr->can('shareholderAdd') || $usr->can('shareholderView') ||  $usr->can('shareholderDelete') ||  $usr->can('shareholderUpdate'))
+     {{-- NEW EXPENSE MENU --}}
+                <li class="sidebar-title">
+                    <span>Accounting</span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#shareholderSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="shareholderSubmenu">
+                        <i data-feather="dollar-sign"></i>
+                        <span>Shareholders</span>
+                        <i data-feather="chevron-down" class="ms-auto"></i>
+                    </a>
+                    <ul class="collapse list-unstyled {{ Route::is('shareholders.index') || Route::is('shareholders.index') ? 'show' : '' }}" id="shareholderSubmenu" data-bs-parent="#sidebar-menu">
+                         @if ( $usr->can('shareholderAdd') || $usr->can('shareholderView') ||  $usr->can('shareholderDelete') ||  $usr->can('shareholderUpdate'))
+                        <li><a class="nav-link {{ Route::is('shareholders.index') ? 'active' : '' }}" href="{{ route('shareholders.index') }}">Shareholder List</a></li>
+                        @endif
+                        
+                    </ul>
+                </li>
+                @if ($usr->can('bankAdd') || $usr->can('bankView') ||$usr->can('bankDelete') || $usr->can('bankUpdate'))
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('banks.index')  || Route::is('banks.create') || Route::is('banks.edit') ? 'active' : '' }}" href="{{ route('banks.index') }}">
+                        <i data-feather="folder"></i>
+                        <span>Bank List</span>
+                    </a>
+                </li>
+                @endif
+                     @if ($usr->can('coaAdd') || $usr->can('coaView') ||$usr->can('coaDelete') || $usr->can('coaUpdate'))
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('accounts.index')  || Route::is('accounts.create') || Route::is('accounts.edit') ? 'active' : '' }}" href="{{ route('accounts.index') }}">
+                        <i data-feather="folder"></i>
+                        <span>COA</span>
+                    </a>
+                </li>
+                @endif
+                 @if ($usr->can('accountSettingAdd') || $usr->can('accountSettingView') ||$usr->can('accountSettingDelete') || $usr->can('accountSettingUpdate'))
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('accounting-settings.index')  || Route::is('accounting-settings.create') || Route::is('accounting-settings.edit') ? 'active' : '' }}" href="{{ route('accounting-settings.index') }}">
+                        <i data-feather="folder"></i>
+                        <span>Accounting Settings</span>
+                    </a>
+                </li>
+                @endif
+                 @if ($usr->can('opening-balancesAdd') || $usr->can('opening-balancesView') ||$usr->can('opening-balancesDelete') || $usr->can('opening-balancesUpdate'))
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('opening-balances.index')  || Route::is('opening-balances.create') || Route::is('opening-balances.edit') ? 'active' : '' }}" href="{{ route('opening-balances.index') }}">
+                        <i data-feather="folder"></i>
+                        <span>Opening Balances</span>
+                    </a>
+                </li>
+                @endif
+@endif
   @if ($usr->can('reportAdd'))
                 <li class="sidebar-title">
                     <span>Report</span>

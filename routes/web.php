@@ -62,6 +62,10 @@ use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\PurchaseController;
 use App\Http\Controllers\Admin\AnalyticSettingController;
+use App\Http\Controllers\Admin\BankController;
+use App\Http\Controllers\Admin\AccountController;
+use App\Http\Controllers\Admin\AccountingSettingController;
+use App\Http\Controllers\Admin\OpeningBalanceController;
 
 
 // Route::get('/', function () {
@@ -122,6 +126,28 @@ Route::controller(AuthController::class)->group(function () {
 
 
 Route::group(['middleware' => ['auth']], function() {
+
+     // Opening Balances Routes
+    Route::resource('opening-balances', OpeningBalanceController::class)->except('show');
+    Route::get('ajax-opening-balances-data', [OpeningBalanceController::class, 'data'])->name('ajax.opening-balances.data');
+
+     // Accounting Settings Routes
+    Route::resource('accounting-settings', AccountingSettingController::class)->except('show');
+    Route::get('ajax-accounting-settings-data', [AccountingSettingController::class, 'data'])->name('ajax.accounting-settings.data');
+
+
+    // Chart of Accounts Routes
+    Route::resource('accounts', AccountController::class);
+    Route::get('ajax-accounts-data', [AccountController::class, 'data'])->name('ajax.accounts.data');
+    Route::get('ajax-accounts-all', [AccountController::class, 'allAccounts'])->name('ajax.accounts.all');
+
+    // Bank Routes
+    Route::resource('banks', BankController::class);
+    Route::get('ajax-banks-data', [BankController::class, 'data'])->name('ajax.banks.data');
+
+    // Shareholder List Routes
+    Route::get('/shareholders', [UserController::class, 'shareholderIndex'])->name('shareholders.index');
+    Route::get('/ajax-shareholders-data', [UserController::class, 'shareholdersData'])->name('ajax.shareholders.data');
 
     Route::get('/settings-analytics', [AnalyticSettingController::class, 'index'])->name('settings.analytics.index');
     Route::post('/settings-analytics-update', [AnalyticSettingController::class, 'update'])->name('settings.analytics.update');
