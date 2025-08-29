@@ -256,20 +256,22 @@
                     </ul>
                 </li>
 @endif
-   @if ($usr->can('bankAdd') || $usr->can('bankView') ||$usr->can('bankDelete') || $usr->can('bankUpdate') || $usr->can('shareholderAdd') || $usr->can('shareholderView') ||  $usr->can('shareholderDelete') ||  $usr->can('shareholderUpdate'))
+   @if ($usr->can('accountSettingAdd') || $usr->can('accountSettingView') ||$usr->can('accountSettingDelete') || $usr->can('accountSettingUpdate') || $usr->can('opening-balancesAdd') || $usr->can('opening-balancesView') ||$usr->can('opening-balancesDelete') || $usr->can('opening-balancesUpdate') || $usr->can('coaAdd') || $usr->can('coaView') ||$usr->can('coaDelete') || $usr->can('coaUpdate') || $usr->can('bankAdd') || $usr->can('bankView') ||$usr->can('bankDelete') || $usr->can('bankUpdate') || $usr->can('shareholderAdd') || $usr->can('shareholderView') ||  $usr->can('shareholderDelete') ||  $usr->can('shareholderUpdate'))
      {{-- NEW EXPENSE MENU --}}
                 <li class="sidebar-title">
                     <span>Accounting</span>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#shareholderSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="shareholderSubmenu">
-                        <i data-feather="dollar-sign"></i>
+                        <i data-feather="user-plus"></i>
                         <span>Shareholders</span>
                         <i data-feather="chevron-down" class="ms-auto"></i>
                     </a>
-                    <ul class="collapse list-unstyled {{ Route::is('shareholders.index') || Route::is('shareholders.index') ? 'show' : '' }}" id="shareholderSubmenu" data-bs-parent="#sidebar-menu">
+                    <ul class="collapse list-unstyled {{Route::is('shareholder-withdraws.edit') || Route::is('shareholder-withdraws.create') || Route::is('shareholder-withdraws.index')  || Route::is('shareholder-deposits.edit') || Route::is('shareholder-deposits.create') || Route::is('shareholder-deposits.index') || Route::is('shareholders.index') || Route::is('shareholders.index') ? 'show' : '' }}" id="shareholderSubmenu" data-bs-parent="#sidebar-menu">
                          @if ( $usr->can('shareholderAdd') || $usr->can('shareholderView') ||  $usr->can('shareholderDelete') ||  $usr->can('shareholderUpdate'))
                         <li><a class="nav-link {{ Route::is('shareholders.index') ? 'active' : '' }}" href="{{ route('shareholders.index') }}">Shareholder List</a></li>
+                        <li><a class="nav-link {{Route::is('shareholder-deposits.edit') || Route::is('shareholder-deposits.create') || Route::is('shareholder-deposits.index') ? 'active' : '' }}" href="{{ route('shareholder-deposits.index') }}"> Deposit List</a></li>
+                        <li><a class="nav-link {{Route::is('shareholder-withdraws.edit') || Route::is('shareholder-withdraws.create') || Route::is('shareholder-withdraws.index') ? 'active' : '' }}" href="{{ route('shareholder-withdraws.index') }}"> Withdrawal List</a></li>
                         @endif
                         
                     </ul>
@@ -317,12 +319,31 @@
                         <span>Report</span>
                         <i data-feather="chevron-down" class="ms-auto"></i>
                     </a>
-                    <ul class="collapse list-unstyled {{Route::is('report.profit_loss') || Route::is('report.income') || Route::is('report.sales') || Route::is('report.customer') || Route::is('report.category') ? 'show' : '' }}" id="reportSubmenu" data-bs-parent="#sidebar-menu">
+                    <ul class="collapse list-unstyled {{Route::is('profit_and_loss.index') || Route::is('trail_balance.index') || Route::is('balance_sheet.index') || Route::is('general_ledger.index') || Route::is('reports.bank_book.index') || Route::is('reports.cash_book.index') || Route::is('report.profit_loss') || Route::is('report.income') || Route::is('report.sales') || Route::is('report.customer') || Route::is('report.category') ? 'show' : '' }}" id="reportSubmenu" data-bs-parent="#sidebar-menu">
+                         
+                       @if ($usr->can('cashbookReportView'))
+                         <li><a class="nav-link {{ Route::is('reports.cash_book.index') ? 'active' : '' }}" href="{{ route('reports.cash_book.index') }}">Cash Book</a></li>
+@endif
+          @if ($usr->can('bankbookReportView'))
+                         <li><a class="nav-link {{ Route::is('reports.bank_book.index') ? 'active' : '' }}" href="{{ route('reports.bank_book.index') }}">Bank Book</a></li>
+@endif
+  @if ($usr->can('generalLedgerView'))
+                         <li><a class="nav-link {{ Route::is('general_ledger.index') ? 'active' : '' }}" href="{{ route('general_ledger.index') }}">General Ledger</a></li>
+@endif
+  @if ($usr->can('balanceSheetView'))
+                         <li><a class="nav-link {{ Route::is('balance_sheet.index') ? 'active' : '' }}" href="{{ route('balance_sheet.index') }}">Balance Sheet</a></li>
+@endif
+  @if ($usr->can('trailBalanceView'))
+                         <li><a class="nav-link {{ Route::is('trail_balance.index') ? 'active' : '' }}" href="{{ route('trial_balance.index') }}">Trail Balance</a></li>
+@endif
+  @if ($usr->can('profitlossView'))
+                         <li><a class="nav-link {{ Route::is('profit_and_loss.index') ? 'active' : '' }}" href="{{ route('profit_and_loss.index') }}">Profit & Loss(Accounting)</a></li>
+@endif
                         <li><a class="nav-link {{ Route::is('report.sales') ? 'active' : '' }}" href="{{ route('report.sales') }}">Sales Report</a></li>
                         <li><a class="nav-link {{ Route::is('report.customer') ? 'active' : '' }}" href="{{ route('report.customer') }}">Customer Report</a></li>
                         <li><a class="nav-link {{ Route::is('report.category') ? 'active' : '' }}" href="{{ route('report.category') }}">Category Wise Report</a></li>
-                          <li><a class="nav-link {{ Route::is('report.income') ? 'active' : '' }}" href="{{ route('report.income') }}">Income Report</a></li>
-                           <li><a class="nav-link {{ Route::is('report.profit_loss') ? 'active' : '' }}" href="{{ route('report.profit_loss') }}">Profit & Loss Report</a></li>
+                        <li><a class="nav-link {{ Route::is('report.income') ? 'active' : '' }}" href="{{ route('report.income') }}">Income Report</a></li>
+                        <li><a class="nav-link {{ Route::is('report.profit_loss') ? 'active' : '' }}" href="{{ route('report.profit_loss') }}">Profit & Loss Report</a></li>
                     </ul>
                 </li>
                 @endif

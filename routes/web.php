@@ -66,6 +66,10 @@ use App\Http\Controllers\Admin\BankController;
 use App\Http\Controllers\Admin\AccountController;
 use App\Http\Controllers\Admin\AccountingSettingController;
 use App\Http\Controllers\Admin\OpeningBalanceController;
+use App\Http\Controllers\Admin\ShareholderDepositController;
+use App\Http\Controllers\Admin\ShareholderWithdrawController;
+use App\Http\Controllers\Admin\CashBookController;
+use App\Http\Controllers\Admin\BankBookController;
 
 
 // Route::get('/', function () {
@@ -126,6 +130,55 @@ Route::controller(AuthController::class)->group(function () {
 
 
 Route::group(['middleware' => ['auth']], function() {
+
+
+
+
+    // Profit & Loss Routes
+    Route::get('profit-and-loss', [ReportController::class, 'profitAndLossIndex'])->name('profit_and_loss.index');
+    Route::get('profit-and-loss-generate', [ReportController::class, 'generateProfitAndLoss'])->name('profit_and_loss.generate');
+     Route::get('profit-and-loss-print', [ReportController::class, 'printProfitAndLoss'])->name('profit_and_loss.print');
+
+
+     // Trial Balance Routes
+    Route::get('trial-balance', [ReportController::class, 'trialBalanceIndex'])->name('trial_balance.index');
+    Route::get('trial-balance-generate', [ReportController::class, 'generateTrialBalance'])->name('trial_balance.generate');
+    Route::get('trial-balance-print', [ReportController::class, 'printTrialBalance'])->name('trial_balance.print');
+
+     // General Ledger
+    Route::get('general-ledger', [ReportController::class, 'generalLedgerIndex'])->name('general_ledger.index');
+    Route::get('general-ledger-generate', [ReportController::class, 'generateGeneralLedger'])->name('general_ledger.generate');
+      Route::get('general-ledger-print', [ReportController::class, 'printGeneralLedger'])->name('general_ledger.print');
+    
+    // Balance Sheet
+    Route::get('balance-sheet', [ReportController::class, 'balanceSheetIndex'])->name('balance_sheet.index');
+    Route::get('balance-sheet-generate', [ReportController::class, 'generateBalanceSheet'])->name('balance_sheet.generate');
+     Route::get('balance-sheet-print', [ReportController::class, 'printBalanceSheet'])->name('balance_sheet.print');
+    
+    // A single endpoint for dependencies like the account list
+    Route::get('dependencies', [ReportController::class, 'getReportDependencies'])->name('dependencies');
+
+
+     // Bank Book Report Routes
+    Route::get('reports-bank-book', [BankBookController::class, 'index'])->name('reports.bank_book.index');
+    Route::get('reports-bank-book-dependencies', [BankBookController::class, 'getDependencies'])->name('reports.bank_book.dependencies');
+    Route::get('reports-bank-book-generate', [BankBookController::class, 'generateReport'])->name('reports.bank_book.generate');
+    Route::get('reports/bank-book-print', [BankBookController::class, 'printReport'])->name('reports.bank_book.print');
+
+    Route::get('reports-cash-book', [CashBookController::class, 'index'])->name('reports.cash_book.index');
+    Route::get('reports-cash-book-dependencies', [CashBookController::class, 'getDependencies'])->name('reports.cash_book.dependencies');
+    Route::get('reports-cash-book-generate', [CashBookController::class, 'generateReport'])->name('reports.cash_book.generate');
+    Route::get('reports/cash-book-print', [CashBookController::class, 'printReport'])->name('reports.cash_book.print');
+
+
+      // Shareholder Withdraw Routes
+    Route::resource('shareholder-withdraws', ShareholderWithdrawController::class)->except('show');
+    Route::get('ajax-shareholder-withdraws-data', [ShareholderWithdrawController::class, 'data'])->name('ajax.shareholder-withdraws.data');
+
+
+    // Shareholder Deposit Routes
+    Route::resource('shareholder-deposits', ShareholderDepositController::class)->except('show');
+    Route::get('ajax-shareholder-deposits-data', [ShareholderDepositController::class, 'data'])->name('ajax.shareholder-deposits.data');
 
      // Opening Balances Routes
     Route::resource('opening-balances', OpeningBalanceController::class)->except('show');
